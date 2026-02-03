@@ -11,25 +11,21 @@ Utiliza los siguientes enlaces para navegar por las diferentes áreas de documen
     <td width="25%" align="center">
       <a href="docs/01_requisitos/README.md">
         <img src="https://img.shields.io/badge/Fase-Requisitos-blue?style=for-the-badge&logo=readthedocs" alt="Requisitos"><br>
-        <b>Requisitos y Casos de Uso</b>
       </a>
     </td>
     <td width="25%" align="center">
       <a href="docs/02_analisis_diseno/README.md">
         <img src="https://img.shields.io/badge/Fase-Análisis_y_Diseño-orange?style=for-the-badge&logo=uml" alt="Analisis"><br>
-        <b>Análisis y Diseño (AS-IS / TO-BE)</b>
       </a>
     </td>
     <td width="25%" align="center">
       <a href="docs/03_diagramas/README.md">
         <img src="https://img.shields.io/badge/Docs-Diagramas-green?style=for-the-badge&logo=diagrams.net" alt="Diagramas"><br>
-        <b>Diagramas UML y Flujos</b>
       </a>
     </td>
     <td width="25%" align="center">
       <a href="docs/04_gestion_proyecto/README.md">
         <img src="https://img.shields.io/badge/RUP-Gestión-red?style=for-the-badge&logo=jira" alt="Gestion"><br>
-        <b>Gestión y Planificación</b>
       </a>
     </td>
   </tr>
