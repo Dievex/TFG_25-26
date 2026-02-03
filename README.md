@@ -1,4 +1,4 @@
-# TFG: Sistema de Automatización RPA para Procesos SAP en Maflow Spain Automotive
+# TFG: Sistema de Automatización RPA para Optimización de Procesos SAP en Maflow Spain Automotive
 
 Este repositorio contiene la documentación, código fuente y seguimiento del Trabajo de Fin de Grado (TFG) centrado en la optimización de procesos productivos industriales mediante RPA.
 
