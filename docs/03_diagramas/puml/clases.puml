@@ -1,0 +1,34 @@
+@startuml Diagrama de Clases (Modelo de Dominio)
+
+hide empty members
+hide circle
+
+class Operario
+class PuestoTrabajo 
+class Impresora
+class SistemaMES
+class RobotRPA
+class UsuarioSAP
+class OrdenProduccion
+class Galia
+
+Operario "1" -- "1" PuestoTrabajo : ocupa >
+PuestoTrabajo "*" -- "1" UsuarioSAP : configurado con >
+UsuarioSAP "1" -- "1" Impresora : imprime en (configuración fija) >
+SistemaMES "1" --> "*" OrdenProduccion : provee datos de >
+RobotRPA "1" ..> "*" Galia : procesa/genera >
+RobotRPA "1" ..> "1" UsuarioSAP : utiliza para conectar >
+RobotRPA "1" ..> "1" SistemaMES : lee datos de >
+OrdenProduccion "1" *-- "*" Galia : contiene >
+Operario "1" ..> "*" Galia : solicita generación >
+Galia "*" ..> "1" Impresora : impresa por >
+
+note right of UsuarioSAP
+  Regla de Negocio:
+  Cada Usuario SAP tiene asignada
+  una única impresora por defecto.
+  Varios Puestos pueden compartir
+  el mismo Usuario SAP.
+end note
+
+@enduml
