@@ -1,0 +1,95 @@
+@startuml Diagrama de Objetos
+title Escenario: Operario Juan lanza lote desde Puesto Soldadura
+
+object "juan : Operario" as op {
+    idEmpleado = "EMP001"
+    nombre = "Juan Perez"
+}
+
+object "puestoSoldadura : PuestoTrabajo" as puesto {
+    codigoPuesto = "PT_SOLD_01"
+    ubicacionPlanta = "Nave A - Línea 2"
+    hostnamePC = "MAFLOW_WS_05"
+}
+
+object "usuarioProduccion : UsuarioSAP" as sapUser {
+    username = "SAP_PROD_USER_01"
+    perfilPermisos = "Z_PROD_OPERATOR"
+}
+
+object "impresoraZebra : Impresora" as printer {
+    idImpresora = "ZEBRA_L2_01"
+    modelo = "Zebra ZT411"
+    colaImpresionSAP = "LOCL"
+}
+
+object "mesMaflow : SistemaMES" as mes {
+    version = "v4.5"
+    dbConnection = "SQL_PROD_01"
+}
+
+object "orden101 : OrdenProduccion" as orden {
+    numeroOrden = "ORD-100055"
+    referenciaMaterial = "REF-A/C-PIPE-05"
+    cantidadTotal = 200
+}
+
+object "galia1 : Galia" as g1 {
+    id = 5001
+    estado = "Completada"
+    cantidadCaja = 50
+    numeroEtiqueta = "G-2024-0001"
+}
+
+object "galia2 : Galia" as g2 {
+    id = 5002
+    estado = "En Proceso"
+    cantidadCaja = 50
+    numeroEtiqueta = null
+}
+
+object "robot1 : RobotRPA" as bot {
+    nombreRobot = "Robot_Galias_01"
+    estado = "Busy"
+}
+
+' Relaciones Instanciadas (Fieles al Diagrama de Clases)
+
+' Operario ocupa Puesto
+op -- puesto 
+
+' Puesto configurado con Usuario SAP
+puesto -- sapUser 
+
+' Usuario SAP imprime en Impresora
+sapUser -- printer 
+
+' Sistema MES provee Orden Producción
+mes --> orden 
+
+' Orden contiene Galias
+orden *-- g1
+orden *-- g2
+
+' Operario solicita Galias
+op ..> g1
+op ..> g2
+
+' Robot lee datos de MES
+bot ..> mes : lee datos
+
+' Robot utiliza Usuario SAP
+bot ..> sapUser : conecta con
+
+' Robot procesa Galia
+bot ..> g2 : procesando
+
+' Galia impresa por Impresora
+g1 ..> printer : impresa por
+
+note right of g2
+  Esta instancia está siendo
+  trabajada actualmente por el Robot
+end note
+
+@enduml
