@@ -53,38 +53,18 @@ object "robot1 : RobotRPA" as bot {
     estado = "Busy"
 }
 
-' Relaciones Instanciadas (Fieles al Diagrama de Clases)
 
-' Operario ocupa Puesto
 op -- puesto 
-
-' Puesto configurado con Usuario SAP
 puesto -- sapUser 
-
-' Usuario SAP imprime en Impresora
 sapUser -- printer 
-
-' Sistema MES provee Orden Producción
 mes --> orden 
-
-' Orden contiene Galias
 orden *-- g1
 orden *-- g2
-
-' Operario solicita Galias
 op ..> g1
 op ..> g2
-
-' Robot lee datos de MES
 bot ..> mes : lee datos
-
-' Robot utiliza Usuario SAP
 bot ..> sapUser : conecta con
-
-' Robot procesa Galia
 bot ..> g2 : procesando
-
-' Galia impresa por Impresora
 g1 ..> printer : impresa por
 
 note right of g2
