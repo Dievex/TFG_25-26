@@ -1,0 +1,39 @@
+@startuml
+hide empty description
+skinparam state {
+  BackgroundColor White
+  BorderColor Black
+  ArrowColor Black
+}
+
+state "Robot RPA (Agente)" as RobotContainer {
+    [*] --> Desconectado : Inicio Servicio
+
+    state "Desconectado" as Desconectado
+    
+    state "Disponible (Idle)" as Idle : Esperando tareas\nen base de datos
+
+    state "Procesando Lote" as Working {
+        [*] --> ValidarEntorno
+        ValidarEntorno --> LoginSAP : SAP cerrado
+        ValidarEntorno --> Navegar : SAP abierto
+        LoginSAP --> Navegar
+        
+        Navegar --> IntroducirDatos
+        IntroducirDatos --> Confirmar
+        Confirmar --> [*] : Galia OK
+        
+        state "Gestión Error" as ErrorHandle
+        IntroducirDatos --> ErrorHandle : Fallo
+        ErrorHandle --> [*] : Registra Error
+    }
+
+    state "Modo Fallo" as SystemError : Requiere reinicio\nmanual o de sistema
+
+    Desconectado --> Idle : Iniciar / Login OK
+    Idle --> Working : Detecta Galias 'En Cola'
+    Working --> Idle : Fin de Cola
+
+}
+@enduml
+

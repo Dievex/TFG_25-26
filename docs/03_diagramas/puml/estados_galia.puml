@@ -1,0 +1,28 @@
+@startuml
+hide empty description
+skinparam state {
+  BackgroundColor White
+  BorderColor Black
+  ArrowColor Black
+}
+
+state "Galia (Ciclo de Vida)" as GaliaContainer {
+    [*] --> Pendiente : Registro en MES
+
+    state "Pendiente" as Pendiente : Datos disponibles\nen base de datos
+
+    state "En Cola" as EnCola : Seleccionada por\nOperario para imprimir
+
+    state "En Proceso" as EnProceso : Robot interactuando\ncon SAP
+
+    state "Completada" as Completada : Generada en SAP\ne Impresa
+
+    state "Error" as Error : Fallo de validación\no error técnico
+
+    Pendiente --> EnCola : Operario lanza lote
+    EnCola --> Pendiente : Cancelar
+    EnCola --> EnProceso : Robot toma ítem
+    EnProceso --> Completada : Éxito SAP
+    EnProceso --> Error : Excepción capturada
+}
+@enduml
