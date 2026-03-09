@@ -9,23 +9,23 @@ Utiliza los siguientes enlaces para navegar por las diferentes áreas de documen
 <table width="100%">
   <tr>
     <td width="25%" align="center">
-      <a href="docs/01_requisitos/README.md">
+      <a href="docs/0ADME.md">
         <img src="https://img.shields.io/badge/Fase-Requisitos-blue?style=for-the-badge&logo=readthedocs" alt="Requisitos"><br>
       </a>
     </td>
     <td width="25%" align="center">
-      <a href="docs/02_analisis_diseno/README.md">
+      <a href="docs/02_analisis_di>
         <img src="https://img.shields.io/badge/Fase-Análisis_y_Diseño-orange?style=for-the-badge&logo=uml" alt="Analisis"><br>
       </a>
     </td>
     <td width="25%" align="center">
       <a href="docs/03_diagramas/README.md">
-        <img src="https://img.shields.io/badge/Docs-Diagramas-green?style=for-the-badge&logo=diagrams.net" alt="Diagramas"><br>
+      ps://img.shields.io/badge/Docs-Diagramas-green?style=for-the-badge&logo=diagrams.net" alt="Diagramas"><br>
       </a>
     </td>
     <td width="25%" align="center">
       <a href="docs/04_gestion_proyecto/README.md">
-        <img src="https://img.shields.io/badge/RUP-Gestión-red?style=for-the-badge&logo=jira" alt="Gestion"><br>
+        <imgmg.shields.io/badge/RUP-Gestión-red?style=for-the-badge&logo=jira" alt="Gestion"><br>
       </a>
     </td>
   </tr>
