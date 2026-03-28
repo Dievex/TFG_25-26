@@ -1,0 +1,28 @@
+@startuml
+
+title Diagrama de clases
+
+hide circles
+hide empty members
+
+class Operario
+class InterfazWeb
+class RobotRPA
+class SAP
+class Impresora
+class PuestoTrabajo
+class Galia
+class MES
+
+Operario --> InterfazWeb : usa
+Operario --> PuestoTrabajo : pertenece a
+InterfazWeb --> PuestoTrabajo : consulta y selecciona
+InterfazWeb --> MES : declara piezas en
+InterfazWeb --> RobotRPA : solicita ejecución a
+RobotRPA --> PuestoTrabajo : determina usuario SAP según
+RobotRPA --> SAP : automatiza declaración en
+SAP --> Galia : genera
+SAP --> Impresora : envía Galia a
+PuestoTrabajo --> Impresora : tiene asignada
+
+@enduml

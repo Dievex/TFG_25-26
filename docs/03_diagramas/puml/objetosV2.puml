@@ -1,0 +1,57 @@
+@startuml
+
+title Diagrama de Objetos - Escenario: Declaración de Galia en Puesto Soldadura
+
+hide circles
+hide empty members
+
+object "jGarcia : Operario" as operario {
+    nombre = "Juan García"
+    turno = "Mañana"
+}
+
+object "interfaz : InterfazWeb" as interfaz {
+    url = "http://192.168.1.50:3000"
+}
+
+object "puesto01 : PuestoTrabajo" as puesto {
+    nombre = "Soldadura L1"
+    usuarioSAP = "USR_SOL01"
+}
+
+object "robot : RobotRPA" as robot {
+    estado = "Ejecutando"
+    ultimoCambioPassword = "2026-02-28"
+}
+
+object "mes : MES" as mes
+
+object "sap : SAP" as sap {
+    modulo = "PP-PI"
+    transaccion = "MB31"
+}
+
+object "impresora01 : Impresora" as impresora {
+    nombre = "Zebra-Nave1"
+    ubicacion = "Línea Soldadura"
+}
+
+object "galia_00142 : Galia" as galia {
+    numeroOrden = "1000142"
+    referencia = "7700123456"
+    cantidad = 25
+    estado = 1
+}
+
+operario --> interfaz : usa
+operario --> puesto : pertenece a
+interfaz --> puesto : consulta y selecciona
+interfaz --> mes : declara piezas en
+interfaz --> robot : solicita ejecución a
+robot --> puesto : determina usuario SAP según
+robot --> sap : automatiza declaración en
+sap --> galia : genera
+sap --> impresora : envía Galia a
+puesto --> impresora : tiene asignada
+
+@enduml
