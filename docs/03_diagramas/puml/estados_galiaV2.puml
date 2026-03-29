@@ -1,0 +1,22 @@
+@startuml
+
+title Diagrama de Estados - Galia
+
+hide empty description
+
+[*] --> Pendiente : operario guarda registro\nen InterfazWeb
+
+Pendiente --> EnProceso : RobotRPA inicia\ndeclaración en SAP
+
+EnProceso --> Completada : SAP confirma OK\n[estado = 1]
+EnProceso --> Error : SAP devuelve fallo\n[estado = 2]
+
+Completada --> Imprimiendo : SAP envía a\nimpresora asignada
+
+Imprimiendo --> Impresa : impresora\nconfirma impresión
+
+Error --> Pendiente : reintento manual\ndel operario
+
+Impresa --> [*]
+
+@enduml

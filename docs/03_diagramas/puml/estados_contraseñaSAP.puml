@@ -1,0 +1,27 @@
+@startuml
+
+title Diagrama de Estados - Contraseña SAP
+
+hide empty description
+
+[*] --> Vigente : contraseña establecida
+
+Vigente --> Vigente : RobotRPA se loguea\n[días transcurridos < 28]
+
+Vigente --> ProximaACaducar : RobotRPA detecta\n[días transcurridos >= 28]
+
+ProximaACaducar --> Renovando : RobotRPA inicia\ncambio automático
+
+Renovando --> Vigente : cambio exitoso\n[días = 0, nueva contraseña]
+
+Renovando --> Bloqueada : 3 intentos fallidos\nal cambiar contraseña
+
+Vigente --> Caducada : no se renovó\n[días transcurridos = 30]
+
+Caducada --> Bloqueada : intento de login\ncon contraseña caducada
+
+Bloqueada --> Vigente : desbloqueo manual\npor administrador SAP
+
+Bloqueada --> [*]
+
+@enduml

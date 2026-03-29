@@ -1,0 +1,37 @@
+@startuml
+
+title Diagrama de Estados - RobotRPA
+
+hide empty description
+
+[*] --> Inactivo
+
+Inactivo --> PeticionRecibida : petición HTTP entrante
+
+PeticionRecibida --> VerificandoContrasena : inicia proceso
+
+VerificandoContrasena --> CambiandoContrasena : han pasado >= 28 días
+VerificandoContrasena --> LogueandoSAP : han pasado < 28 días
+
+CambiandoContrasena --> LogueandoSAP : contraseña renovada con éxito
+CambiandoContrasena --> ErrorCritico : fallo al renovar\ncontraseña
+
+LogueandoSAP --> LeyendoRegistros : login correcto
+LogueandoSAP --> ErrorCritico : credenciales incorrectas\no cuenta bloqueada
+
+LeyendoRegistros --> ProcesandoEnSAP : registros obtenidos de BD
+
+ProcesandoEnSAP --> ProcesandoEnSAP : siguiente registro
+ProcesandoEnSAP --> RegistroCompletado : SAP confirma OK\n[estado = 1]
+ProcesandoEnSAP --> RegistroConError : SAP devuelve error\n[estado = 2]
+
+RegistroCompletado --> ProcesandoEnSAP : quedan registros
+RegistroCompletado --> Completado : no quedan registros
+
+RegistroConError --> ProcesandoEnSAP : quedan registros
+RegistroConError --> Completado : no quedan registros
+
+Completado --> Inactivo : proceso finalizado
+ErrorCritico --> Inactivo : proceso abortado
+
+@enduml
