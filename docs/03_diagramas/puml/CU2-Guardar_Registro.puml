@@ -1,0 +1,47 @@
+@startuml
+title CU2 Guardar Registro
+
+|Operario|
+start
+:Pulsa botón Guardar;
+
+|InterfazWeb|
+:Valida campos obligatorios;
+
+if (¿Campos válidos?) then (no)
+    :Muestra error de validación;
+    stop
+else (sí)
+    :Persiste registro en BD\n[estado = 0];
+endif
+
+if (¿BD disponible?) then (no)
+    :Muestra error de conexión;
+    stop
+else (sí)
+    :Envía declaración al MES;
+endif
+
+|MES|
+if (¿Declaración aceptada?) then (no)
+    :Devuelve error;
+
+    |InterfazWeb|
+    :Notifica fallo en MES\n(registro guardado en BD);
+else (sí)
+    :Confirma declaración;
+
+    |InterfazWeb|
+    :Muestra confirmación al operario;
+endif
+
+|Operario|
+if (¿Quiere añadir más registros?) then (sí)
+    :Vuelve a UC1;
+    stop
+else (no)
+    :Procede a UC4\nEnviar a SAP;
+    stop
+endif
+
+@enduml

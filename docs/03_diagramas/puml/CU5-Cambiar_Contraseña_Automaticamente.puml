@@ -1,0 +1,45 @@
+@startuml
+title CU5 Cambiar Contraseña Automáticamente
+
+|RobotRPA|
+start
+:Detecta días >= 28\ndesde último cambio;
+
+:Accede a pantalla de\ncambio de contraseña SAP;
+
+:Introduce contraseña actual;
+
+|SAP|
+if (¿Contraseña actual correcta?) then (no)
+
+    |RobotRPA|
+    :Incrementa contador\nde intentos fallidos;
+
+    if (¿Intentos >= 3?) then (sí)
+        :Aborta proceso\npara evitar bloqueo;
+        stop
+    else (no)
+        :Reintenta con\ncontraseña actual;
+    endif
+
+else (sí)
+    |RobotRPA|
+    :Genera nueva contraseña\nsegún política SAP;
+    :Escribe y confirma\nnueva contraseña;
+
+    |SAP|
+    if (¿Nueva contraseña válida?) then (no)
+        |RobotRPA|
+        :Genera contraseña alternativa;
+        :Reintenta cambio;
+    else (sí)
+        :Acepta cambio de contraseña;
+
+        |RobotRPA|
+        :Actualiza fecha\núltimo cambio;
+        :Retorna a UC4\npara login normal;
+        stop
+    endif
+endif
+
+@enduml

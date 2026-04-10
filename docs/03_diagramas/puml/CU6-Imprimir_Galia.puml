@@ -1,0 +1,29 @@
+@startuml
+title CU6 Imprimir Galia
+
+|SAP|
+start
+:Recibe declaración\ncompletada por RobotRPA;
+:Determina impresora destino\nsegún usuario logueado;
+:Genera documento Galia\ncon datos de la orden;
+
+if (¿Galia generada correctamente?) then (no)
+    :Devuelve error al RobotRPA\n[registro estado = 2];
+    stop
+else (sí)
+    :Envía Galia\na impresora asignada;
+endif
+
+|Impresora|
+if (¿Impresora disponible?) then (no)
+    :Encola trabajo de impresión;
+    :Imprime cuando\nvuelva a estar activa;
+else (sí)
+    :Imprime Galia;
+endif
+
+|Operario|
+:Recoge Galia impresa\ny la coloca en el lote;
+stop
+
+@enduml

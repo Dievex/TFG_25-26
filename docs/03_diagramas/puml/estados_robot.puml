@@ -6,7 +6,7 @@ skinparam state {
   ArrowColor Black
 }
 
-state "Robot RPA (Agente)" as RobotContainer {
+state "Robot RPA" as RobotContainer {
     [*] --> Desconectado : Inicio Servicio
 
     state "Desconectado" as Desconectado

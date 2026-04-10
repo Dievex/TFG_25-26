@@ -1,0 +1,50 @@
+@startuml
+title CU1 Registrar Declaración
+
+|Operario|
+start
+:Accede a InterfazWeb;
+
+|InterfazWeb|
+:Consulta puestos al MES;
+
+if (¿Hay puestos activos?) then (no)
+    :Muestra error;
+    stop
+else (sí)
+    :Muestra desplegable de puestos;
+endif
+
+|Operario|
+:Selecciona puesto;
+
+|InterfazWeb|
+:Filtra referencias abiertas\npara ese puesto en MES;
+
+if (¿Hay referencias abiertas?) then (no)
+    :Desplegable de referencias vacío;
+    stop
+else (sí)
+    :Muestra desplegable de referencias;
+endif
+
+|Operario|
+:Selecciona referencia;
+
+|InterfazWeb|
+:Filtra órdenes abiertas\npara esa referencia y puesto;
+
+if (¿Hay órdenes abiertas?) then (no)
+    :Desplegable de órdenes vacío;
+    stop
+else (sí)
+    :Muestra desplegable de órdenes;
+    :Muestra cantidad producida anteriormente;
+endif
+
+|Operario|
+:Selecciona orden;
+:Introduce cantidad a declarar;
+
+stop
+@enduml
