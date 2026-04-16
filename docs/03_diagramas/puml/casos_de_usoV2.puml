@@ -13,6 +13,10 @@ actor MES
 actor SAP
 actor AdministradorSAP
 
+' Herencia de actores
+Operario <|-- Administrador
+Responsable <|-- Administrador
+
 rectangle "Sistema RPA Galia/SAP" {
 
     package "Autenticación" {
@@ -68,28 +72,26 @@ Responsable --> UC_LOG_RES
 Responsable --> UC_UPD
 Responsable --> UC_DEL
 
-' Administrador
-Administrador --> UC_LOGIN
+' Administrador (solo sus CUs exclusivos)
 Administrador --> UC_UCREATE
 Administrador --> UC_UREAD
 Administrador --> UC_UUPDATE
 Administrador --> UC_UDELETE
-Administrador --> UC_LOG_RES
+
+' Includes
+UC2 .> UC7 : <<include>>
+UC4 .> UC_SAP_LOGIN : <<include>>
+UC4 .> UC5 : <<include>>
+UC4 .> UC6 : <<include>>
 
 ' RobotRPA
 RobotRPA --> UC_SAP_LOGIN
 RobotRPA --> UC4
 RobotRPA --> UC5
 
-' Includes
-UC2 .> UC7 : <<include>>
-UC4 .> UC_SAP_LOGIN : <<include>>
-UC4 .> UC5 : <<include>>
-
 ' Sistemas externos
 MES --> UC7
 SAP --> UC6
-UC4 ..> UC6 : <<include>>
 AdministradorSAP --> UC8
 
 @enduml
