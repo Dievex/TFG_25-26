@@ -1,5 +1,5 @@
 @startuml
-title CU4 Procesar Declaraciones
+title CU Procesar Declaraciones
 
 |ServidorEscucha|
 start
@@ -16,10 +16,10 @@ if (¿Días >= 28?) then (sí)
     endif
 endif
 
-:Se loguea en SAP con usuario\ndel puesto de trabajo;
+:Ejecuta UC_SAP_LOGIN\nLoguearse en SAP;
 
 if (¿Login correcto?) then (no)
-    :Registra error crítico\nde credenciales;
+    :Registra error crítico\ny aborta proceso;
     stop
 else (sí)
     :Escribe y ejecuta\ntransacción en SAP;
@@ -30,11 +30,9 @@ endif
 if (¿Hay registros pendientes?) then (no)
     :Cierra sesión en SAP;
     stop
-else (sí)
 endif
 
 repeat
-
     |RobotRPA|
     :Toma siguiente registro\n[estado = 0];
     :Completa campos en SAP\n(referencia, orden, cantidad);
@@ -42,18 +40,15 @@ repeat
     |SAP|
     if (¿SAP procesa correctamente?) then (sí)
         :Envía Galia a impresora\ndel puesto;
-
         |RobotRPA|
         :Actualiza registro\n[estado = 1];
     else (no)
         |RobotRPA|
         :Actualiza registro\n[estado = 2];
     endif
-
 repeat while (¿Quedan registros estado = 0?) is (sí)
 ->no;
 
 :Cierra sesión en SAP;
 stop
-
 @enduml
