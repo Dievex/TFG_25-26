@@ -1,0 +1,43 @@
+@startuml
+title CU Iniciar Sesión
+
+|Usuario|
+start
+:Accede a la pantalla de login;
+:Introduce usuario y contraseña;
+
+|InterfazWeb|
+:Valida que los campos\nno están vacíos;
+
+if (¿Campos rellenos?) then (no)
+    :Muestra error de validación;
+    stop
+else (sí)
+    :Verifica credenciales en BD;
+endif
+
+if (¿Credenciales correctas?) then (no)
+    :Muestra error de autenticación;
+    stop
+else (sí)
+    :Identifica rol del usuario;
+endif
+
+if (¿Rol asignado?) then (no)
+    :Muestra error de rol no asignado;
+    stop
+else (sí)
+endif
+
+if (¿Rol = Operario?) then (sí)
+    :Redirige a pantalla\nde Operario;
+else (no)
+    if (¿Rol = Responsable?) then (sí)
+        :Redirige a pantalla\nde Responsable;
+    else (no)
+        :Redirige a pantalla\nde Administrador;
+    endif
+endif
+
+stop
+@enduml
