@@ -1,0 +1,39 @@
+@startuml
+title CU Loguearse en SAP
+
+|RobotRPA|
+start
+:Determina usuario SAP\nsegún puesto de trabajo;
+:Abre SAP GUI;
+
+if (¿SAP GUI responde?) then (no)
+    :Reintenta apertura\n(máx. 2 veces);
+    if (¿Reintento exitoso?) then (no)
+        :Registra error crítico\ny aborta proceso;
+        stop
+    endif
+endif
+
+:Introduce usuario SAP\ndel puesto;
+:Introduce contraseña;
+
+|SAP|
+if (¿Cuenta bloqueada?) then (sí)
+    |RobotRPA|
+    :Error crítico;
+    stop
+endif
+
+if (¿Credenciales correctas?) then (no)
+    |RobotRPA|
+    :Registra error crítico\ny aborta proceso;
+    stop
+else (sí)
+    :Concede acceso;
+endif
+
+|RobotRPA|
+:Robot autenticado en SAP\nlisto para ejecutar transacciones;
+stop
+
+@enduml
