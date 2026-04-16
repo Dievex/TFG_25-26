@@ -1,0 +1,95 @@
+@startuml
+
+title Diagrama de Casos de Uso - Sistema RPA Galia/SAP
+
+left to right direction
+hide circles
+
+actor Operario
+actor Responsable
+actor Administrador
+actor RobotRPA
+actor MES
+actor SAP
+actor AdministradorSAP
+
+rectangle "Sistema RPA Galia/SAP" {
+
+    package "Autenticación" {
+        usecase "Iniciar sesión" as UC_LOGIN
+    }
+
+    package "Gestión de Declaraciones\n(Operario)" {
+        usecase "Registrar declaración" as UC1
+        usecase "Guardar registro" as UC2
+        usecase "Enviar a SAP" as UC3
+        usecase "Consultar log propio" as UC_LOG_OP
+    }
+
+    package "Gestión de Registros\n(Responsable)" {
+        usecase "Consultar log completo" as UC_LOG_RES
+        usecase "Actualizar registro" as UC_UPD
+        usecase "Eliminar registro" as UC_DEL
+    }
+
+    package "Administración de Usuarios" {
+        usecase "Crear usuario" as UC_UCREATE
+        usecase "Consultar usuarios" as UC_UREAD
+        usecase "Actualizar usuario" as UC_UUPDATE
+        usecase "Eliminar usuario" as UC_UDELETE
+    }
+
+    package "Automatización RPA" {
+        usecase "Loguearse en SAP" as UC_SAP_LOGIN
+        usecase "Procesar declaraciones" as UC4
+        usecase "Cambiar contraseña automáticamente" as UC5
+        usecase "Imprimir Galia" as UC6
+    }
+
+    package "Integración MES" {
+        usecase "Declarar piezas en MES" as UC7
+    }
+
+    package "Administración SAP" {
+        usecase "Desbloquear cuenta SAP" as UC8
+    }
+}
+
+' Operario
+Operario --> UC_LOGIN
+Operario --> UC1
+Operario --> UC2
+Operario --> UC3
+Operario --> UC_LOG_OP
+
+' Responsable
+Responsable --> UC_LOGIN
+Responsable --> UC_LOG_RES
+Responsable --> UC_UPD
+Responsable --> UC_DEL
+
+' Administrador
+Administrador --> UC_LOGIN
+Administrador --> UC_UCREATE
+Administrador --> UC_UREAD
+Administrador --> UC_UUPDATE
+Administrador --> UC_UDELETE
+Administrador --> UC_LOG_RES
+
+' RobotRPA
+RobotRPA --> UC_SAP_LOGIN
+RobotRPA --> UC4
+RobotRPA --> UC5
+
+' Includes
+UC2 .> UC7 : <<include>>
+UC4 .> UC_SAP_LOGIN : <<include>>
+UC4 .> UC5 : <<include>>
+
+' Sistemas externos
+MES --> UC7
+SAP --> UC6
+UC4 ..> UC6 : <<include>>
+AdministradorSAP --> UC8
+
+@enduml
