@@ -1,9 +1,7 @@
-@startuml DiagramaClasesDiseño
+@startuml DiagramaClasesDiseno
 skinparam classAttributeIconSize 0
 skinparam classFontSize 11
 left to right direction
-
-hide empty members
 
 package "Vista" <<boundary>> {
   class LoginView
@@ -65,7 +63,6 @@ package "Modelo" <<entity>> {
     +id: int
     +nombre: string
     +usuarioSAP: string
-    +impresoraId: int
   }
   class Referencia {
     +id: int
@@ -76,29 +73,22 @@ package "Modelo" <<entity>> {
     +id: int
     +numero: string
     +cantidad: int
-    +referenciaId: int
   }
   class Registro {
     +id: int
-    +puestoId: int
-    +referenciaId: int
-    +ordenId: int
     +cantidad: int
     +estado: int
     +fechaCreacion: datetime
   }
   class Galia {
     +id: int
-    +registroId: int
     +numeroOrden: string
-    +referencia: string
     +cantidad: int
     +estado: int
     +fechaProcesado: datetime
   }
   class LogEjecucion {
     +id: int
-    +registroId: int
     +tipoEvento: string
     +mensaje: string
     +fechaHora: datetime
@@ -106,7 +96,6 @@ package "Modelo" <<entity>> {
   }
   class ConfiguracionSAP {
     +id: int
-    +puestoId: int
     +usuario: string
     +ultimoCambioPassword: date
   }
@@ -114,45 +103,64 @@ package "Modelo" <<entity>> {
     +id: int
     +nombre: string
     +ubicacion: string
-    +puestoId: int
   }
 }
 
-LoginView --> AuthController
-DeclaracionView --> DeclaracionController
-DeclaracionView --> RegistroController
-DeclaracionView --> EnvioSAPController
-LogView --> LogController
-AdminView --> AdminController
-AdminView --> DeclaracionView
-AdminView --> LogView
-AdminView --> UsuarioCRUDView
-UsuarioCRUDView --> UsuarioController
 
-AuthController --> Usuario
-AuthController --> Rol
+LoginView         "1" --> "1" AuthController        : usa >
+DeclaracionView   "1" --> "1" DeclaracionController : usa >
+DeclaracionView   "1" --> "1" RegistroController    : usa >
+DeclaracionView   "1" --> "1" EnvioSAPController    : usa >
+LogView           "1" --> "1" LogController         : usa >
+AdminView         "1" --> "1" AdminController       : usa >
+UsuarioCRUDView   "1" --> "1" UsuarioController     : usa >
+
+
+AdminView o-- DeclaracionView  : contiene
+AdminView o-- LogView          : contiene
+AdminView o-- UsuarioCRUDView  : contiene
+
+
+AuthController       --> Usuario
+AuthController       --> Rol
 DeclaracionController --> PuestoTrabajo
 DeclaracionController --> Referencia
 DeclaracionController --> OrdenFabricacion
-RegistroController --> Registro
-RegistroController --> Galia
-EnvioSAPController --> Registro
-EnvioSAPController --> ConfiguracionSAP
-EnvioSAPController --> LogEjecucion
-LogController --> LogEjecucion
-LogController --> Registro
-LogController --> Galia
-AdminController --> Usuario
-AdminController --> Rol
-UsuarioController --> Usuario
-UsuarioController --> Rol
+RegistroController   --> Registro
+RegistroController   --> Galia
+EnvioSAPController   --> Registro
+EnvioSAPController   --> ConfiguracionSAP
+EnvioSAPController   --> LogEjecucion
+LogController        --> LogEjecucion
+LogController        --> Registro
+LogController        --> Galia
+AdminController      --> Usuario
+AdminController      --> Rol
+UsuarioController    --> Usuario
+UsuarioController    --> Rol
 
-Registro --> PuestoTrabajo
-Registro --> Referencia
-Registro --> OrdenFabricacion
-Galia --> Registro
-LogEjecucion --> Registro
-ConfiguracionSAP --> PuestoTrabajo
-PuestoTrabajo --> Impresora
-Usuario --> Rol
+
+
+' Generalización / herencia — Usuario tiene un Rol
+Usuario  "many" --> "1" Rol               : tiene >
+
+' Agregación — PuestoTrabajo agrega una Impresora
+PuestoTrabajo o-- "1" Impresora           : asigna >
+
+' Agregación — PuestoTrabajo tiene ConfiguracionSAP
+PuestoTrabajo o-- "1" ConfiguracionSAP    : tiene >
+
+' Asociación — Registro referencia a PuestoTrabajo, Referencia y OrdenFabricacion
+Registro "many" --> "1" PuestoTrabajo      : pertenece a >
+Registro "many" --> "1" Referencia         : usa >
+Registro "many" --> "1" OrdenFabricacion   : asociada a >
+
+' Composición — Galia es parte de un Registro (no existe sin él)
+Registro *-- "many" Galia                  : genera >
+
+' Composición — LogEjecucion es parte de un Registro
+Registro *-- "many" LogEjecucion           : registra >
+
+' Asociación — OrdenFabricacion referencia a Referencia
+OrdenFabricacion "many" --> "1" Referencia : de tipo >
 @enduml
