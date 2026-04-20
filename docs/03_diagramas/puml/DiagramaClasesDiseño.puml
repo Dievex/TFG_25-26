@@ -1,0 +1,158 @@
+@startuml DiagramaClasesDiseño
+skinparam classAttributeIconSize 0
+skinparam classFontSize 11
+left to right direction
+
+hide empty members
+
+package "Vista" <<boundary>> {
+  class LoginView
+  class DeclaracionView
+  class LogView
+  class AdminView
+  class UsuarioCRUDView
+}
+
+package "Controlador" <<control>> {
+  class AuthController {
+    +login(email, password): Token
+    +logout(token): void
+    +verificarSesion(token): Usuario
+  }
+  class DeclaracionController {
+    +obtenerPuestos(): List<PuestoTrabajo>
+    +obtenerReferencias(): List<Referencia>
+    +obtenerOrdenes(referenciaId): List<OrdenFabricacion>
+  }
+  class RegistroController {
+    +guardarLote(registros): void
+    +obtenerRegistrosPorPuesto(puestoId): List<Registro>
+    +actualizarEstado(registroId, estado): void
+  }
+  class EnvioSAPController {
+    +enviarASAP(puestoId): void
+    +obtenerEstadoProcesamiento(puestoId): List<Registro>
+  }
+  class LogController {
+    +obtenerLogs(filtros): List<LogEjecucion>
+    +obtenerDetalleLogs(registroId): LogEjecucion
+  }
+  class AdminController {
+    +verificarRolAdmin(token): boolean
+  }
+  class UsuarioController {
+    +crearUsuario(datos): Usuario
+    +obtenerUsuarios(): List<Usuario>
+    +actualizarUsuario(id, datos): Usuario
+    +eliminarUsuario(id): void
+    +asignarRol(usuarioId, rolId): void
+  }
+}
+
+package "Modelo" <<entity>> {
+  class Usuario {
+    +id: int
+    +nombre: string
+    +email: string
+    +passwordHash: string
+    +rolId: int
+  }
+  class Rol {
+    +id: int
+    +nombre: string
+  }
+  class PuestoTrabajo {
+    +id: int
+    +nombre: string
+    +usuarioSAP: string
+    +impresoraId: int
+  }
+  class Referencia {
+    +id: int
+    +codigo: string
+    +descripcion: string
+  }
+  class OrdenFabricacion {
+    +id: int
+    +numero: string
+    +cantidad: int
+    +referenciaId: int
+  }
+  class Registro {
+    +id: int
+    +puestoId: int
+    +referenciaId: int
+    +ordenId: int
+    +cantidad: int
+    +estado: int
+    +fechaCreacion: datetime
+  }
+  class Galia {
+    +id: int
+    +registroId: int
+    +numeroOrden: string
+    +referencia: string
+    +cantidad: int
+    +estado: int
+    +fechaProcesado: datetime
+  }
+  class LogEjecucion {
+    +id: int
+    +registroId: int
+    +tipoEvento: string
+    +mensaje: string
+    +fechaHora: datetime
+    +exito: boolean
+  }
+  class ConfiguracionSAP {
+    +id: int
+    +puestoId: int
+    +usuario: string
+    +ultimoCambioPassword: date
+  }
+  class Impresora {
+    +id: int
+    +nombre: string
+    +ubicacion: string
+    +puestoId: int
+  }
+}
+
+LoginView --> AuthController
+DeclaracionView --> DeclaracionController
+DeclaracionView --> RegistroController
+DeclaracionView --> EnvioSAPController
+LogView --> LogController
+AdminView --> AdminController
+AdminView --> DeclaracionView
+AdminView --> LogView
+AdminView --> UsuarioCRUDView
+UsuarioCRUDView --> UsuarioController
+
+AuthController --> Usuario
+AuthController --> Rol
+DeclaracionController --> PuestoTrabajo
+DeclaracionController --> Referencia
+DeclaracionController --> OrdenFabricacion
+RegistroController --> Registro
+RegistroController --> Galia
+EnvioSAPController --> Registro
+EnvioSAPController --> ConfiguracionSAP
+EnvioSAPController --> LogEjecucion
+LogController --> LogEjecucion
+LogController --> Registro
+LogController --> Galia
+AdminController --> Usuario
+AdminController --> Rol
+UsuarioController --> Usuario
+UsuarioController --> Rol
+
+Registro --> PuestoTrabajo
+Registro --> Referencia
+Registro --> OrdenFabricacion
+Galia --> Registro
+LogEjecucion --> Registro
+ConfiguracionSAP --> PuestoTrabajo
+PuestoTrabajo --> Impresora
+Usuario --> Rol
+@enduml
