@@ -1,0 +1,31 @@
+@startuml Actor_RobotRPA
+title Casos de Uso — RobotRPA
+
+left to right direction
+hide circles
+
+actor RobotRPA
+actor SAP
+
+rectangle "Sistema RPA Galia/SAP" {
+
+    package "Automatización RPA" {
+        usecase "Loguearse en SAP"                    as UC_SAP_LOGIN
+        usecase "Procesar declaraciones"              as UC4
+        usecase "Cambiar contraseña automáticamente"  as UC5
+        usecase "Imprimir Galia"                      as UC6
+    }
+}
+
+RobotRPA --> UC_SAP_LOGIN
+RobotRPA --> UC4
+RobotRPA --> UC5
+
+UC4 .> UC_SAP_LOGIN : <<include>>
+UC4 .> UC5          : <<include>>
+UC4 .> UC6          : <<include>>
+
+UC_SAP_LOGIN --> SAP
+UC6          --> SAP
+
+@enduml

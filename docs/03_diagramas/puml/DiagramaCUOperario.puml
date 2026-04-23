@@ -1,0 +1,38 @@
+@startuml Actor_Operario
+title Casos de Uso — Operario
+
+left to right direction
+hide circles
+
+actor Operario
+actor MES
+
+rectangle "Sistema RPA Galia/SAP" {
+
+    package "Autenticación" {
+        usecase "Iniciar sesión" as UC_LOGIN
+    }
+
+    package "Gestión de Declaraciones" {
+        usecase "Registrar declaración" as UC1
+        usecase "Guardar registro"      as UC2
+        usecase "Enviar a SAP"          as UC3
+        usecase "Consultar log propio"  as UC_LOG_OP
+    }
+
+    package "Integración MES" {
+        usecase "Declarar piezas en MES" as UC7
+    }
+}
+
+Operario --> UC_LOGIN
+Operario --> UC1
+Operario --> UC2
+Operario --> UC3
+Operario --> UC_LOG_OP
+
+UC1 --> MES : consulta puestos\nreferencias / órdenes
+UC2 .> UC7 : <<include>>
+UC7 --> MES : declara piezas
+
+@enduml

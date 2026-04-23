@@ -1,0 +1,55 @@
+@startuml Actor_Administrador
+title Casos de Uso — Administrador
+
+left to right direction
+hide circles
+
+actor Administrador
+
+rectangle "Sistema RPA Galia/SAP" {
+
+    package "Autenticación" {
+        usecase "Iniciar sesión" as UC_LOGIN
+    }
+
+    package "Administración de Usuarios" {
+        usecase "Crear usuario"      as UC_UCREATE
+        usecase "Consultar usuarios" as UC_UREAD
+        usecase "Actualizar usuario" as UC_UUPDATE
+        usecase "Eliminar usuario"   as UC_UDELETE
+    }
+
+    package "Gestión de Registros\n(heredado de Responsable)" {
+        usecase "Consultar log completo" as UC_LOG_RES
+        usecase "Actualizar registro"    as UC_UPD
+        usecase "Eliminar registro"      as UC_DEL
+    }
+
+    package "Gestión de Declaraciones\n(heredado de Operario)" {
+        usecase "Registrar declaración" as UC1
+        usecase "Guardar registro"      as UC2
+        usecase "Enviar a SAP"          as UC3
+        usecase "Consultar log propio"  as UC_LOG_OP
+    }
+}
+
+Administrador --> UC_LOGIN
+Administrador --> UC_UCREATE
+Administrador --> UC_UREAD
+Administrador --> UC_UUPDATE
+Administrador --> UC_UDELETE
+Administrador --> UC_LOG_RES
+Administrador --> UC_UPD
+Administrador --> UC_DEL
+Administrador --> UC1
+Administrador --> UC2
+Administrador --> UC3
+Administrador --> UC_LOG_OP
+
+note right of Administrador
+  Incluye todos los CU
+  de Operario y Responsable
+  por herencia
+end note
+
+@enduml

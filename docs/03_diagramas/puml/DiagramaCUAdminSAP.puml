@@ -1,0 +1,26 @@
+@startuml Actor_AdministradorSAP
+title Casos de Uso — AdministradorSAP
+
+left to right direction
+hide circles
+
+actor "AdministradorSAP" as ASAP
+actor SAP
+
+rectangle "Sistema RPA Galia/SAP" {
+
+    package "Administración SAP" {
+        usecase "Desbloquear cuenta SAP" as UC8
+    }
+}
+
+ASAP --> UC8
+UC8  --> SAP
+
+note right of UC8
+  Se activa únicamente cuando
+  el RobotRPA notifica un
+  error crítico de cuenta bloqueada
+end note
+
+@enduml

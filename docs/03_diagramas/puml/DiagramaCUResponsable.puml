@@ -1,0 +1,27 @@
+@startuml Actor_Responsable
+title Casos de Uso — Responsable
+
+left to right direction
+hide circles
+
+actor Responsable
+
+rectangle "Sistema RPA Galia/SAP" {
+
+    package "Autenticación" {
+        usecase "Iniciar sesión" as UC_LOGIN
+    }
+
+    package "Gestión de Registros" {
+        usecase "Consultar log completo" as UC_LOG_RES
+        usecase "Actualizar registro"    as UC_UPD
+        usecase "Eliminar registro"      as UC_DEL
+    }
+}
+
+Responsable --> UC_LOGIN
+Responsable --> UC_LOG_RES
+Responsable --> UC_UPD
+Responsable --> UC_DEL
+
+@enduml
