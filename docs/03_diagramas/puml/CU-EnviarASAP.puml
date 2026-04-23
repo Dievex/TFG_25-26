@@ -1,0 +1,33 @@
+@startuml CU3_EnviarASAP
+title CU: Enviar a SAP
+
+actor Operario
+participant "InterfazWeb" as IW
+database "BaseDatos" as BD
+participant "ServidorEscucha" as SE
+participant "RobotRPA" as RPA
+
+Operario -> IW : Pulsa botón "Enviar a SAP"
+IW -> BD : Verifica registros con estado 0
+
+alt FA1: No hay registros con estado 0
+    BD --> IW : Sin registros pendientes
+    IW --> Operario : Aviso - No hay registros pendientes
+else Flujo principal
+    BD --> IW : Registros pendientes confirmados
+    IW -> SE : Lanza petición HTTP al servidor de escucha
+    alt FA2: Servidor de escucha no responde
+        SE --> IW : Timeout / Sin respuesta
+        IW --> Operario : Error de conexión - Robot no activado
+    else FA3: Petición HTTP rechazada
+        SE --> IW : Petición rechazada
+        IW --> Operario : Fallo - Registros permanecen en estado 0
+    else Servidor responde OK
+        SE --> IW : Confirmación de recepción
+        SE -> RPA : Activa ejecución del RobotRPA
+        IW --> Operario : Proceso lanzado correctamente
+        note right of Operario : El operario puede cerrar\nla interfaz. El robot trabaja\nde forma autónoma.
+    end
+end
+
+@enduml
