@@ -1,0 +1,56 @@
+@startuml DiagramaComponentes
+skinparam componentStyle rectangle
+
+package "Capa de presentación (React)" {
+  [LoginView]
+  [DeclaracionView]
+  [LogView]
+  [AdminView]
+  [UsuarioCRUDView]
+}
+
+package "Capa de lógica de negocio (Node.js / Express)" {
+  [AuthController]
+  [DeclaracionController]
+  [RegistroController]
+  [EnvioSAPController]
+  [LogController]
+  [AdminController]
+  [UsuarioController]
+}
+
+package "Capa de persistencia" {
+  database "Base de datos relacional" as DB
+}
+
+package "Capa de automatización RPA (UiPath)" {
+  [Robot RPA]
+}
+
+component "SAP GUI" as SAP
+component "MES (Apriso)" as MES
+
+[LoginView] --> [AuthController] : API REST
+[DeclaracionView] --> [DeclaracionController] : API REST
+[DeclaracionView] --> [RegistroController] : API REST
+[DeclaracionView] --> [EnvioSAPController] : API REST
+[LogView] --> [LogController] : API REST
+[AdminView] --> [AdminController] : API REST
+[AdminView] --> [DeclaracionView]
+[AdminView] --> [LogView]
+[AdminView] --> [UsuarioCRUDView]
+[UsuarioCRUDView] --> [UsuarioController] : API REST
+
+[AuthController] --> DB
+[DeclaracionController] --> DB
+[RegistroController] --> DB
+[RegistroController] --> MES : Declaración de piezas
+[EnvioSAPController] --> DB
+[EnvioSAPController] --> [Robot RPA] : HTTP POST activación
+[LogController] --> DB
+[AdminController] --> DB
+[UsuarioController] --> DB
+
+[Robot RPA] --> DB : Lectura/escritura registros y logs
+[Robot RPA] --> SAP : Automatización GUI
+@enduml

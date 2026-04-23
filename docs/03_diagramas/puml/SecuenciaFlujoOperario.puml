@@ -1,0 +1,63 @@
+@startuml SecuenciaFlujoOperario
+actor Operario
+participant "LoginView" as LV
+participant "AuthController" as AC
+participant "DeclaracionView" as DV
+participant "DeclaracionController" as DC
+participant "RegistroController" as RC
+participant "EnvioSAPController" as ESC
+participant "Robot RPA\n(UiPath)" as RPA
+database "Base de datos" as DB
+participant "SAP GUI" as SAP
+participant "MES" as MES
+
+Operario -> LV: Introduce credenciales
+LV -> AC: login(email, password)
+AC -> DB: verificarUsuario(email, passwordHash)
+DB --> AC: Usuario + Rol
+AC --> LV: Token de sesión + Rol
+LV --> Operario: Redirige a DeclaracionView
+
+Operario -> DV: Accede a la pantalla
+DV -> DC: obtenerPuestos()
+DC -> DB: SELECT puestos
+DB --> DC: List<PuestoTrabajo>
+DC --> DV: Lista de puestos
+
+Operario -> DV: Selecciona puesto, referencia, orden y cantidad
+Operario -> DV: Pulsa "Guardar"
+DV -> RC: guardarLote(registros)
+RC -> DB: INSERT registros (estado=0)
+RC -> MES: declararPiezas(registros)
+MES --> RC: Confirmación
+DB --> RC: Registros persistidos
+RC --> DV: Actualiza vista (pendiente)
+
+Operario -> DV: Pulsa "Enviar a SAP"
+DV -> ESC: enviarASAP(puestoId)
+ESC -> DB: SELECT registros WHERE estado=0 AND puestoId
+DB --> ESC: List<Registro>
+ESC -> RPA: HTTP POST /activar (registros)
+RPA --> ESC: 200 OK - Proceso iniciado
+
+loop Por cada registro pendiente
+  RPA -> SAP: Login con usuario del puesto
+  SAP --> RPA: Sesión activa
+  RPA -> SAP: Navegar a transacción, introducir datos
+  SAP --> RPA: Confirmación o error
+  alt Procesado con éxito
+    RPA -> DB: UPDATE registro estado=1
+    RPA -> DB: INSERT LogEjecucion (exito=true)
+    SAP -> SAP: Genera Galia y envía a impresora
+  else Error en SAP
+    RPA -> DB: UPDATE registro estado=2
+    RPA -> DB: INSERT LogEjecucion (exito=false, mensaje)
+  end
+end
+
+DV -> ESC: obtenerEstadoProcesamiento(puestoId)
+ESC -> DB: SELECT registros actualizados
+DB --> ESC: List<Registro> con estados 0/1/2
+ESC --> DV: Estados actualizados
+DV --> Operario: Muestra resultado por registro (OK / Error)
+@enduml

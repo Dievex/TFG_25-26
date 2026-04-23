@@ -1,0 +1,39 @@
+@startuml CU1_RegistrarDeclaracion
+title CU-1: Registrar Declaración
+
+actor Operario
+participant "InterfazWeb" as IW
+participant "MES" as MES
+
+Operario -> IW : Accede a la InterfazWeb
+IW -> MES : Consulta puestos disponibles
+MES --> IW : Lista de puestos activos
+IW --> Operario : Muestra puestos disponibles
+
+Operario -> IW : Selecciona su puesto
+IW -> MES : Solicita referencias con órdenes abiertas en el puesto
+MES --> IW : Lista de referencias filtradas
+IW --> Operario : Muestra referencias disponibles
+
+Operario -> IW : Selecciona la referencia
+IW -> MES : Solicita órdenes abiertas para esa referencia
+MES --> IW : Lista de órdenes abiertas
+IW --> Operario : Muestra órdenes disponibles
+
+Operario -> IW : Selecciona la orden
+IW --> Operario : Muestra cantidad producida anteriormente
+
+Operario -> IW : Introduce la cantidad a declarar
+
+alt FA1: No hay puestos activos en MES
+    MES --> IW : Sin puestos activos
+    IW --> Operario : Error - Formulario bloqueado
+else FA2: No hay referencias abiertas en el puesto
+    MES --> IW : Sin referencias
+    IW --> Operario : Desplegable de referencias vacío
+else FA3: No hay órdenes abiertas para la referencia
+    MES --> IW : Sin órdenes
+    IW --> Operario : Desplegable de órdenes vacío
+end
+
+@enduml

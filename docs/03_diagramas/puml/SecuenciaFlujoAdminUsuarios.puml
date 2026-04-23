@@ -1,0 +1,46 @@
+@startuml SecuenciaAdminUsuarios
+actor Administrador
+participant "AdminView" as AV
+participant "AdminController" as AC
+participant "UsuarioCRUDView" as UV
+participant "UsuarioController" as UC
+database "Base de datos" as DB
+
+Administrador -> AV: Accede al panel de administración
+AV -> AC: verificarRolAdmin(token)
+AC --> AV: Acceso autorizado
+
+Administrador -> AV: Navega a gestión de usuarios
+AV -> UV: Carga UsuarioCRUDView
+UV -> UC: obtenerUsuarios()
+UC -> DB: SELECT usuarios JOIN roles
+DB --> UC: List<Usuario>
+UC --> UV: Lista de usuarios con roles
+
+Administrador -> UV: Pulsa "Crear usuario"
+UV --> Administrador: Muestra formulario de alta
+Administrador -> UV: Rellena datos y confirma
+UV -> UC: crearUsuario(nombre, email, password, rolId)
+UC -> DB: INSERT usuario
+DB --> UC: Usuario creado
+UC --> UV: Actualiza lista
+UV --> Administrador: Confirmación de alta
+
+Administrador -> UV: Selecciona usuario y pulsa "Editar"
+UV --> Administrador: Muestra formulario precargado
+Administrador -> UV: Modifica datos y confirma
+UV -> UC: actualizarUsuario(id, datos)
+UC -> DB: UPDATE usuario
+DB --> UC: OK
+UC --> UV: Actualiza lista
+UV --> Administrador: Confirmación de edición
+
+Administrador -> UV: Selecciona usuario y pulsa "Eliminar"
+UV --> Administrador: Pide confirmación
+Administrador -> UV: Confirma eliminación
+UV -> UC: eliminarUsuario(id)
+UC -> DB: DELETE usuario
+DB --> UC: OK
+UC --> UV: Actualiza lista
+UV --> Administrador: Confirmación de baja
+@enduml
