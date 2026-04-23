@@ -1,0 +1,28 @@
+@startuml CU9_DesbloquearCuentaSAP
+title CU: Desbloquear Cuenta SAP
+
+participant "RobotRPA" as RPA
+database "BaseDatos" as BD
+actor "AdministradorSAP" as ADMIN
+participant "SAP" as SAP
+actor Operario
+
+RPA -> BD : Registra error crítico - cuenta SAP bloqueada
+RPA --> ADMIN : Notifica bloqueo de cuenta del puesto afectado
+
+alt FA1: Administrador no disponible
+    note right of ADMIN : Registros permanecen en estado 0\nhasta que se resuelva el bloqueo
+else Administrador disponible
+    ADMIN -> SAP : Accede a consola de administración SAP
+    ADMIN -> SAP : Localiza la cuenta bloqueada del puesto afectado
+    ADMIN -> SAP : Desbloquea la cuenta y restablece contraseña
+    alt FA2: Desbloqueo requiere intervención del proveedor SAP
+        ADMIN -> ADMIN : Escala la incidencia externamente
+    else Desbloqueo exitoso
+        SAP --> ADMIN : Cuenta operativa
+        ADMIN --> Operario : Notifica que el sistema está operativo
+        Operario -> "InterfazWeb" : Pulsa "Enviar a SAP" (relanza proceso desde CU-3)
+    end
+end
+
+@enduml
