@@ -1,0 +1,33 @@
+@startuml CU7_CambiarContrasena
+title CU: Cambiar Contraseña Automáticamente
+
+participant "RobotRPA" as RPA
+participant "SAP" as SAP
+database "BaseDatos" as BD
+
+RPA -> RPA : Detecta que han pasado >= 28 días desde último cambio
+RPA -> SAP : Accede a pantalla de cambio de contraseña
+RPA -> SAP : Introduce contraseña actual
+
+alt FA1: Contraseña actual incorrecta
+    SAP --> RPA : Error - Contraseña incorrecta
+    RPA -> SAP : Reintento (hasta 2 veces)
+    SAP --> RPA : Tercer fallo
+    RPA -> RPA : Aborta para evitar bloqueo
+else Contraseña actual aceptada
+    RPA -> RPA : Genera nueva contraseña (política SAP)
+    RPA -> SAP : Introduce nueva contraseña
+    alt FA2: Nueva contraseña no cumple política SAP
+        SAP --> RPA : Política no cumplida
+        RPA -> RPA : Genera contraseña alternativa y reintenta
+    else FA3: Ya han transcurrido 30 días (contraseña caducada)
+        SAP --> RPA : Fuerza cambio en el propio login
+        RPA -> SAP : Gestiona cambio en el flujo de login
+    else Cambio aceptado
+        SAP --> RPA : Cambio de contraseña confirmado
+        RPA -> BD : Actualiza fecha de último cambio (reinicia a 0 días)
+        note right of RPA : Continúa con login\nnormal en CU-4
+    end
+end
+
+@enduml
