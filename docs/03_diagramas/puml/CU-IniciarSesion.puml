@@ -1,0 +1,30 @@
+@startuml CU6_IniciarSesion
+title CU: Iniciar Sesión
+
+actor Usuario as U
+participant "InterfazWeb" as IW
+database "BaseDatos" as BD
+
+U -> IW : Accede a la pantalla de login
+IW --> U : Muestra formulario de login
+
+U -> IW : Introduce usuario y contraseña
+
+alt FA2: Campos vacíos
+    IW --> U : Error de validación - Sin consultar BD
+else Campos rellenos
+    IW -> BD : Valida credenciales
+    alt FA1: Credenciales incorrectas
+        BD --> IW : Credenciales no válidas
+        IW --> U : Error de autenticación - Acceso denegado
+    else FA3: Usuario sin rol asignado
+        BD --> IW : Usuario sin rol
+        IW --> U : Error - Contactar con administrador
+    else Credenciales válidas
+        BD --> IW : Credenciales correctas + rol asignado
+        IW -> IW : Identifica rol del usuario
+        IW --> U : Redirige a pantalla según rol\n(Operario / Responsable / Administrador)
+    end
+end
+
+@enduml
