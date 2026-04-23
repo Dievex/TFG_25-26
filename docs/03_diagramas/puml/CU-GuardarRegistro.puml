@@ -1,0 +1,32 @@
+@startuml CU2_GuardarRegistro
+title CU: Guardar Registro
+
+actor Operario
+participant "InterfazWeb" as IW
+database "BaseDatos" as BD
+participant "MES" as MES
+
+Operario -> IW : Pulsa botón Guardar
+IW -> IW : Valida campos obligatorios
+
+alt FA1: Algún campo obligatorio vacío
+    IW --> Operario : Error de validación - No guarda
+else FA2: Error de conexión con BD
+    IW -> BD : Persiste registro (estado 0)
+    BD --> IW : Error de conexión
+    IW --> Operario : Error - Registro no persistido
+else Flujo principal
+    IW -> BD : Persiste registro (estado 0)
+    BD --> IW : Confirmación
+    IW -> MES : Declara piezas en MES
+    alt FA3: Error al declarar en MES
+        MES --> IW : Error en declaración MES
+        IW --> Operario : Registro guardado, pero fallo en MES
+    else MES responde OK
+        MES --> IW : Confirmación declaración
+        IW --> Operario : Confirmación exitosa
+        Operario -> IW : Puede repetir proceso desde CU-1
+    end
+end
+
+@enduml
