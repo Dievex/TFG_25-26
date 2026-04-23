@@ -1,5 +1,5 @@
-@startuml CU1_RegistrarDeclaracion
-title CU-1: Registrar Declaración
+@startuml CU_RegistrarDeclaracion
+title CU: Registrar Declaración
 
 actor Operario
 participant "InterfazWeb" as IW
