@@ -1,0 +1,30 @@
+@startuml CU8_ImprimirGalia
+title CU: Imprimir Galia
+
+participant "RobotRPA" as RPA
+participant "SAP" as SAP
+participant "Impresora" as IMP
+actor Operario
+
+SAP -> SAP : Recibe declaración completada por el robot (estado 1)
+SAP -> SAP : Determina impresora destino según usuario logueado (puesto)
+SAP -> SAP : Genera documento Galia con datos de la orden
+
+alt FA2: Error en la generación del documento
+    SAP --> RPA : Error en generación de Galia
+    RPA -> "BaseDatos" : Marca registro con estado 2
+else Galia generada
+    SAP -> IMP : Envía Galia a impresora asignada al puesto
+    alt FA1: Impresora no disponible
+        IMP --> SAP : Impresora no disponible
+        SAP -> SAP : Encola trabajo de impresión
+        note right of SAP : Se imprimirá cuando\nla impresora esté activa
+    else Impresora disponible
+        IMP --> SAP : Confirmación de recepción
+        IMP -> IMP : Imprime el documento Galia
+        IMP --> Operario : Galia disponible para recoger
+        Operario -> Operario : Coloca Galia en el lote de piezas
+    end
+end
+
+@enduml
