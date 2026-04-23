@@ -1,0 +1,33 @@
+@startuml CU4_LoguearseEnSAP
+title CU: Loguearse en SAP
+
+participant "RobotRPA" as RPA
+participant "SAP GUI" as SAP
+
+RPA -> RPA : Determina usuario SAP según puesto de trabajo
+RPA -> SAP : Abre interfaz gráfica SAP GUI
+
+alt FA3: SAP GUI no responde
+    SAP --> RPA : Sin respuesta
+    RPA -> SAP : Reintento (hasta 2 veces)
+    SAP --> RPA : Sin respuesta en tercer intento
+    RPA -> RPA : Aborta proceso
+else SAP GUI abierta
+    RPA -> SAP : Introduce usuario SAP del puesto
+    RPA -> SAP : Introduce contraseña correspondiente
+    SAP -> SAP : Valida credenciales
+
+    alt FA1: Credenciales incorrectas
+        SAP --> RPA : Error de autenticación
+        RPA -> RPA : Registra error crítico y aborta proceso
+    else FA2: Cuenta SAP bloqueada
+        SAP --> RPA : Cuenta bloqueada
+        RPA -> RPA : Registra error crítico
+        RPA --> "AdministradorSAP" : Notifica bloqueo de cuenta
+    else Credenciales válidas
+        SAP --> RPA : Acceso concedido
+        note right of RPA : Robot autenticado y listo\npara ejecutar transacciones
+    end
+end
+
+@enduml
