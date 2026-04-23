@@ -1,0 +1,49 @@
+@startuml CU5_ProcesarDeclaraciones
+title CU: Procesar Declaraciones
+
+participant "ServidorEscucha" as SE
+participant "RobotRPA" as RPA
+database "BaseDatos" as BD
+participant "SAP" as SAP
+
+SE -> RPA : Activa RobotRPA
+RPA -> RPA : Verifica días desde último cambio de contraseña
+
+alt Han pasado >= 28 días
+    RPA -> RPA : Ejecuta CU-7 (Cambiar contraseña automáticamente)
+end
+
+RPA -> SAP : Ejecuta CU-4 (Login en SAP)
+
+alt FA1: Login en SAP falla
+    RPA -> RPA : Registra error crítico y aborta proceso
+else Login exitoso
+    RPA -> SAP : Escribe transacción en buscador SAP y ejecuta
+
+    loop Para cada registro con estado 0 en BD
+        RPA -> BD : Lee siguiente registro con estado 0
+        alt FA3: No quedan registros con estado 0
+            BD --> RPA : Sin registros pendientes
+            note right of RPA : Robot finaliza sin procesar
+        else Registro encontrado
+            BD --> RPA : Datos del registro
+            RPA -> SAP : Completa campos (referencia, orden, cantidad)
+            SAP -> SAP : Procesa la declaración
+
+            alt FA2: SAP devuelve error en registro concreto
+                SAP --> RPA : Error en declaración
+                RPA -> BD : Actualiza registro a estado 2 (error)
+                note right of RPA : Continúa con el siguiente registro
+            else SAP acepta declaración
+                SAP --> RPA : Declaración confirmada
+                SAP -> "Impresora" : Envía Galia a imprimir
+                RPA -> BD : Actualiza registro a estado 1 (completado)
+            end
+        end
+    end
+
+    RPA -> SAP : Cierra sesión en SAP
+    RPA -> RPA : Finaliza ejecución
+end
+
+@enduml
