@@ -1,0 +1,43 @@
+@startuml Actores_Relaciones
+title Relaciones entre Actores — Sistema RPA Galia/SAP
+
+left to right direction
+hide circles
+skinparam actorStyle awesome
+
+actor Operario
+actor Responsable
+actor Administrador
+actor RobotRPA
+actor "MES"              as MES
+actor "SAP"              as SAP
+actor "AdministradorSAP" as ASAP
+
+' Herencia
+Operario    <|-- Administrador
+Responsable <|-- Administrador
+
+note right of Administrador
+  Hereda los casos de uso
+  de Operario y Responsable
+end note
+
+note right of RobotRPA
+  Actor sistema autónomo.
+  Activado por petición HTTP
+  desde la Interfaz Web.
+end note
+
+note right of MES
+  Sistema externo (Apriso).
+  Fuente de datos de puestos,
+  referencias y órdenes.
+end note
+
+note right of SAP
+  Sistema ERP externo.
+  El robot opera sobre
+  su interfaz gráfica (GUI).
+end note
+
+@enduml
