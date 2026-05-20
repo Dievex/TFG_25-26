@@ -1,16 +1,20 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
 import { 
   Activity, 
   FileText, 
   ListTodo, 
   Users, 
-  LogOut 
+  LogOut,
+  Sun,
+  Moon
 } from 'lucide-react';
 
 const Navbar = () => {
   const { user, logout } = useAuth();
+  const { theme, toggleTheme } = useTheme();
 
   if (!user) return null;
 
@@ -76,8 +80,17 @@ const Navbar = () => {
             )}
           </nav>
 
-          {/* Perfil de Usuario y Cerrar Sesión */}
-          <div className="flex items-center space-x-4">
+          {/* Perfil de Usuario, Tema y Cerrar Sesión */}
+          <div className="flex items-center space-x-3 sm:space-x-4">
+            
+            <button
+              onClick={toggleTheme}
+              className="p-2 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white rounded-xl transition-colors duration-150"
+              title="Alternar tema"
+            >
+              {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+            </button>
+
             <div className="hidden sm:flex flex-col text-right">
               <span className="text-xs text-slate-400 font-bold tracking-wide uppercase">Sesión iniciada</span>
               <span className="text-sm font-semibold text-slate-100 flex items-center space-x-1.5">
