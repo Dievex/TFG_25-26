@@ -1,6 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import * as logService from '../../services/logService';
+import { 
+  Filter, 
+  Search, 
+  ChevronDown, 
+  Edit2, 
+  Trash2, 
+  CheckCircle2, 
+  AlertCircle, 
+  Clock 
+} from 'lucide-react';
 
 const LogCompleto = () => {
   const { user } = useAuth();
@@ -8,11 +18,15 @@ const LogCompleto = () => {
   const [logs, setLogs] = useState([]);
   const [filteredLogs, setFilteredLogs] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState({ text: '', type: '' });
+  const [notification, setNotification] = useState(null);
+
+  // Paginación
+  const [currentPage, setCurrentPage] = useState(1);
+  const ITEMS_PER_PAGE = 10;
 
   // Filtros
   const [filters, setFilters] = useState({
-    estado: '',
+    estado: 'Todos',
     puesto: '',
     orden: '',
     referencia: ''
@@ -40,7 +54,7 @@ const LogCompleto = () => {
       const data = await logService.getLogs();
       setLogs(data);
     } catch (error) {
-      showMessage('Error al cargar logs del servidor', 'error');
+      triggerNotification('Error al cargar logs del servidor', 'error');
     } finally {
       setLoading(false);
     }
@@ -49,7 +63,7 @@ const LogCompleto = () => {
   const aplicarFiltros = () => {
     let result = [...logs];
 
-    if (filters.estado !== '') {
+    if (filters.estado !== 'Todos') {
       result = result.filter(log => log.SAP_STATUS.toString() === filters.estado);
     }
     if (filters.puesto !== '') {
@@ -63,6 +77,7 @@ const LogCompleto = () => {
     }
 
     setFilteredLogs(result);
+    setCurrentPage(1); // Resetear a la primera página al filtrar
   };
 
   const handleFilterChange = (e) => {
@@ -70,20 +85,51 @@ const LogCompleto = () => {
     setFilters(prev => ({ ...prev, [name]: value }));
   };
 
-  const showMessage = (text, type) => {
-    setMessage({ text, type });
-    setTimeout(() => setMessage({ text: '', type: '' }), 4000);
+  const triggerNotification = (message, type = 'success') => {
+    setNotification({ message, type });
+    setTimeout(() => setNotification(null), 4000);
   };
 
   const getStatusBadge = (status) => {
     switch(status) {
-      case 0: return <span style={{ background: '#6c757d', color: 'white', padding: '4px 8px', borderRadius: '12px', fontSize: '12px' }}>Pendiente</span>;
-      case 1: return <span style={{ background: '#28a745', color: 'white', padding: '4px 8px', borderRadius: '12px', fontSize: '12px' }}>Completado</span>;
-      case 2: return <span style={{ background: '#dc3545', color: 'white', padding: '4px 8px', borderRadius: '12px', fontSize: '12px' }}>Error</span>;
-      case 3: return <span style={{ background: '#fd7e14', color: 'white', padding: '4px 8px', borderRadius: '12px', fontSize: '12px' }}>En revisión</span>;
-      default: return <span>{status}</span>;
+      case 0: 
+        return (
+          <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold leading-4 tracking-wide bg-slate-500/10 text-slate-700 border border-slate-500/20">
+            <span className="w-1.5 h-1.5 rounded-full mr-1.5 bg-slate-500"></span>Pendiente
+          </span>
+        );
+      case 1: 
+        return (
+          <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold leading-4 tracking-wide bg-emerald-500/10 text-emerald-700 border border-emerald-500/20">
+            <span className="w-1.5 h-1.5 rounded-full mr-1.5 bg-emerald-500"></span>Completado
+          </span>
+        );
+      case 2: 
+        return (
+          <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold leading-4 tracking-wide bg-red-500/10 text-red-700 border border-red-500/20">
+            <span className="w-1.5 h-1.5 rounded-full mr-1.5 bg-red-500"></span>Error
+          </span>
+        );
+      case 3: 
+        return (
+          <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold leading-4 tracking-wide bg-amber-500/10 text-amber-700 border border-amber-500/20">
+            <span className="w-1.5 h-1.5 rounded-full mr-1.5 bg-amber-500 animate-pulse"></span>En revisión
+          </span>
+        );
+      default: 
+        return (
+          <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold leading-4 tracking-wide bg-slate-100 text-slate-500">
+            {status}
+          </span>
+        );
     }
   };
+
+  // --- Lógica Paginación ---
+  const indexOfLastItem = currentPage * ITEMS_PER_PAGE;
+  const indexOfFirstItem = indexOfLastItem - ITEMS_PER_PAGE;
+  const currentLogs = filteredLogs.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(filteredLogs.length / ITEMS_PER_PAGE);
 
   // --- Lógica del Modal (Editar) ---
   const handleOpenEdit = (log) => {
@@ -114,11 +160,11 @@ const LogCompleto = () => {
         newCantidad: formData.newCantidad,
         newEstado: formData.newEstado
       });
-      showMessage('Registro actualizado correctamente', 'success');
+      triggerNotification('Registro actualizado correctamente', 'success');
       handleCloseEdit();
       cargarLogs();
     } catch (error) {
-      showMessage('Error al actualizar registro', 'error');
+      triggerNotification('Error al actualizar registro', 'error');
     }
   };
 
@@ -130,149 +176,338 @@ const LogCompleto = () => {
           originalDateTime: log.DATE_TIME,
           orderId: log.ORDER_ID
         });
-        showMessage('Registro eliminado correctamente', 'success');
+        triggerNotification('Registro eliminado correctamente', 'success');
         cargarLogs();
       } catch (error) {
-        showMessage('Error al eliminar registro', 'error');
+        triggerNotification('Error al eliminar registro', 'error');
       }
     }
   };
 
   return (
-    <div style={{ padding: '20px', fontFamily: 'sans-serif', maxWidth: '1200px', margin: '0 auto' }}>
-      <h2 style={{ marginBottom: '20px', color: '#333' }}>Log de Ejecución</h2>
-
-      {message.text && (
-        <div style={{ padding: '10px', marginBottom: '20px', backgroundColor: message.type === 'success' ? '#d4edda' : '#f8d7da', color: message.type === 'success' ? '#155724' : '#721c24', borderRadius: '4px' }}>
-          {message.text}
+    <div className="space-y-6 animate-fade-in max-w-7xl mx-auto pt-6 pb-12">
+      
+      {/* Sistema de Notificaciones Toast */}
+      {notification && (
+        <div className="fixed top-5 right-5 z-50 flex items-center p-4 mb-4 text-sm rounded-xl shadow-xl border animate-slide-in-right bg-white max-w-md transition-all duration-300"
+          style={{
+            borderColor: notification.type === 'error' ? '#fee2e2' : '#dcfce7',
+          }}
+        >
+          {notification.type === 'error' ? (
+            <AlertCircle className="w-5 h-5 text-red-500 mr-3 shrink-0" />
+          ) : (
+            <CheckCircle2 className="w-5 h-5 text-green-500 mr-3 shrink-0" />
+          )}
+          <div>
+            <span className="font-semibold text-slate-800">
+              {notification.type === 'error' ? 'Error: ' : 'Éxito: '}
+            </span>
+            <span className="text-slate-600 ml-1">{notification.message}</span>
+          </div>
         </div>
       )}
 
-      {/* Controles de Filtro */}
-      <div style={{ display: 'flex', gap: '15px', marginBottom: '20px', backgroundColor: 'white', padding: '15px', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
-        <div style={{ flex: 1 }}>
-          <label style={{ display: 'block', fontSize: '12px', marginBottom: '5px', fontWeight: 'bold' }}>Estado</label>
-          <select name="estado" value={filters.estado} onChange={handleFilterChange} style={{ width: '100%', padding: '8px' }}>
-            <option value="">Todos</option>
-            <option value="0">Pendiente</option>
-            <option value="1">Completado</option>
-            <option value="2">Error</option>
-            <option value="3">En revisión</option>
-          </select>
+      {/* Header de la sección */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h2 className="text-2xl font-extrabold text-slate-900 tracking-tight">Log de Ejecución</h2>
+          <p className="text-slate-500 text-sm mt-1">Monitorea las declaraciones enviadas, sus estados de procesamiento por el robot RPA.</p>
         </div>
-        <div style={{ flex: 1 }}>
-          <label style={{ display: 'block', fontSize: '12px', marginBottom: '5px', fontWeight: 'bold' }}>Puesto</label>
-          <input type="text" name="puesto" value={filters.puesto} onChange={handleFilterChange} placeholder="Filtrar..." style={{ width: '100%', padding: '8px', boxSizing: 'border-box' }} />
-        </div>
-        <div style={{ flex: 1 }}>
-          <label style={{ display: 'block', fontSize: '12px', marginBottom: '5px', fontWeight: 'bold' }}>Orden</label>
-          <input type="text" name="orden" value={filters.orden} onChange={handleFilterChange} placeholder="Filtrar..." style={{ width: '100%', padding: '8px', boxSizing: 'border-box' }} />
-        </div>
-        <div style={{ flex: 1 }}>
-          <label style={{ display: 'block', fontSize: '12px', marginBottom: '5px', fontWeight: 'bold' }}>Referencia</label>
-          <input type="text" name="referencia" value={filters.referencia} onChange={handleFilterChange} placeholder="Filtrar..." style={{ width: '100%', padding: '8px', boxSizing: 'border-box' }} />
+        
+        {/* Resumen de estado rápido */}
+        <div className="flex items-center space-x-3 text-xs font-bold">
+          <span className="px-3 py-1.5 bg-emerald-100 text-emerald-800 rounded-full flex items-center space-x-1">
+            <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span>
+            <span>{logs.filter(l => l.SAP_STATUS === 1).length} Completados</span>
+          </span>
+          <span className="px-3 py-1.5 bg-amber-100 text-amber-800 rounded-full flex items-center space-x-1">
+            <span className="w-1.5 h-1.5 bg-amber-500 rounded-full animate-pulse"></span>
+            <span>{logs.filter(l => l.SAP_STATUS === 3).length} En revisión</span>
+          </span>
+          <span className="px-3 py-1.5 bg-red-100 text-red-800 rounded-full flex items-center space-x-1">
+            <span className="w-1.5 h-1.5 bg-red-500 rounded-full"></span>
+            <span>{logs.filter(l => l.SAP_STATUS === 2).length} Errores</span>
+          </span>
         </div>
       </div>
 
-      {/* Tabla de Logs */}
-      {loading ? (
-        <p>Cargando registros...</p>
-      ) : (
-        <div style={{ overflowX: 'auto', backgroundColor: 'white', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-            <thead>
-              <tr style={{ backgroundColor: '#343a40', color: 'white', textAlign: 'left' }}>
-                <th style={{ padding: '12px' }}>Fecha</th>
-                <th style={{ padding: '12px' }}>Puesto</th>
-                <th style={{ padding: '12px' }}>Orden</th>
-                <th style={{ padding: '12px' }}>Referencia</th>
-                <th style={{ padding: '12px' }}>Cantidad</th>
-                <th style={{ padding: '12px' }}>Estado</th>
-                <th style={{ padding: '12px' }}>Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredLogs.length === 0 ? (
-                <tr>
-                  <td colSpan="7" style={{ padding: '20px', textAlign: 'center' }}>No se encontraron registros.</td>
+      {/* CAJA DE FILTROS */}
+      <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-sm space-y-4">
+        <div className="flex items-center space-x-2 text-slate-800 font-bold text-sm border-b border-slate-100 pb-3">
+          <Filter className="w-4 h-4 text-blue-500" />
+          <span>Filtros de Búsqueda Avanzada</span>
+        </div>
+        
+        <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
+          {/* Filtro: Estado */}
+          <div>
+            <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">Estado</label>
+            <div className="relative">
+              <select
+                name="estado"
+                value={filters.estado}
+                onChange={handleFilterChange}
+                className="block w-full pl-3 pr-8 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs font-semibold text-slate-700 focus:outline-none focus:ring-1 focus:ring-blue-500 appearance-none"
+              >
+                <option value="Todos">Todos los estados</option>
+                <option value="0">Pendiente</option>
+                <option value="1">Completado</option>
+                <option value="2">Error</option>
+                <option value="3">En revisión</option>
+              </select>
+              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-500">
+                <ChevronDown className="w-3.5 h-3.5" />
+              </div>
+            </div>
+          </div>
+
+          {/* Filtro: Puesto */}
+          <div>
+            <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">Puesto</label>
+            <div className="relative">
+              <input
+                type="text"
+                name="puesto"
+                placeholder="Filtrar puesto..."
+                value={filters.puesto}
+                onChange={handleFilterChange}
+                className="block w-full pl-8 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
+              />
+              <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5" />
+            </div>
+          </div>
+
+          {/* Filtro: Orden */}
+          <div>
+            <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">Orden</label>
+            <div className="relative">
+              <input
+                type="text"
+                name="orden"
+                placeholder="Filtrar orden..."
+                value={filters.orden}
+                onChange={handleFilterChange}
+                className="block w-full pl-8 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
+              />
+              <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5" />
+            </div>
+          </div>
+
+          {/* Filtro: Referencia */}
+          <div>
+            <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">Referencia</label>
+            <div className="relative">
+              <input
+                type="text"
+                name="referencia"
+                placeholder="Filtrar referencia..."
+                value={filters.referencia}
+                onChange={handleFilterChange}
+                className="block w-full pl-8 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
+              />
+              <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* TABLA PRINCIPAL DE DATOS */}
+      <div className="bg-white rounded-2xl shadow-sm border border-slate-200/80 overflow-hidden">
+        {loading ? (
+          <div className="p-8 text-center text-slate-500 font-medium">Cargando registros...</div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="bg-slate-900 text-slate-200 text-[11px] font-bold uppercase tracking-wider border-b border-slate-800">
+                  <th className="py-4 px-6">Fecha</th>
+                  <th className="py-4 px-6">Puesto</th>
+                  <th className="py-4 px-6">Orden</th>
+                  <th className="py-4 px-6">Referencia</th>
+                  <th className="py-4 px-6 text-center">Cantidad</th>
+                  <th className="py-4 px-6 text-center">Estado</th>
+                  <th className="py-4 px-6 text-right">Acciones</th>
                 </tr>
-              ) : (
-                filteredLogs.map((log, index) => (
-                  <tr key={index} style={{ borderBottom: '1px solid #dee2e6' }}>
-                    <td style={{ padding: '12px', fontSize: '14px' }}>{new Date(log.DATE_TIME).toLocaleString()}</td>
-                    <td style={{ padding: '12px', fontSize: '14px' }}>{log.PRODUCTION_LINE}</td>
-                    <td style={{ padding: '12px', fontSize: '14px' }}>{log.ORDER_NUMBER}</td>
-                    <td style={{ padding: '12px', fontSize: '14px' }}>{log.REFERENCE}</td>
-                    <td style={{ padding: '12px', fontSize: '14px', fontWeight: 'bold' }}>{log.QUANTITY_MANUFACTURED}</td>
-                    <td style={{ padding: '12px' }}>{getStatusBadge(log.SAP_STATUS)}</td>
-                    <td style={{ padding: '12px' }}>
-                      <button 
-                        onClick={() => handleOpenEdit(log)}
-                        style={{ marginRight: '8px', padding: '4px 8px', backgroundColor: '#ffc107', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '12px' }}
-                      >
-                        Editar
-                      </button>
-                      <button 
-                        onClick={() => handleDelete(log)}
-                        style={{ padding: '4px 8px', backgroundColor: '#dc3545', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '12px' }}
-                      >
-                        Borrar
-                      </button>
+              </thead>
+              <tbody className="divide-y divide-slate-100 text-sm font-medium">
+                {currentLogs.length > 0 ? (
+                  currentLogs.map((log, index) => (
+                    <tr key={index} className="hover:bg-slate-50/70 transition-all duration-150">
+                      
+                      {/* Fecha */}
+                      <td className="py-3.5 px-6 whitespace-nowrap text-slate-500 text-xs">
+                        {new Date(log.DATE_TIME).toLocaleString('es-ES')}
+                      </td>
+
+                      {/* Puesto */}
+                      <td className="py-3.5 px-6 whitespace-nowrap">
+                        <span className="text-slate-900 font-semibold">{log.PRODUCTION_LINE || '—'}</span>
+                      </td>
+
+                      {/* Orden */}
+                      <td className="py-3.5 px-6 whitespace-nowrap text-slate-600 font-mono text-xs">
+                        {log.ORDER_NUMBER}
+                      </td>
+
+                      {/* Referencia */}
+                      <td className="py-3.5 px-6 whitespace-nowrap text-slate-600 font-mono text-xs">
+                        {log.REFERENCE}
+                      </td>
+
+                      {/* Cantidad */}
+                      <td className="py-3.5 px-6 whitespace-nowrap text-center text-slate-900 font-bold">
+                        {log.QUANTITY_MANUFACTURED}
+                      </td>
+
+                      {/* Estado */}
+                      <td className="py-3.5 px-6 whitespace-nowrap text-center">
+                        {getStatusBadge(log.SAP_STATUS)}
+                      </td>
+
+                      {/* Acciones */}
+                      <td className="py-3.5 px-6 whitespace-nowrap text-right">
+                        <div className="flex items-center justify-end space-x-1">
+                          <button
+                            onClick={() => handleOpenEdit(log)}
+                            className="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                            title="Editar"
+                          >
+                            <Edit2 className="w-4 h-4" />
+                          </button>
+                          <button
+                            onClick={() => handleDelete(log)}
+                            className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                            title="Eliminar"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </td>
+
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="7" className="text-center py-10 text-slate-400 font-medium">
+                      No se encontraron registros que coincidan con los filtros aplicados.
                     </td>
                   </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
-      )}
+                )}
+              </tbody>
+            </table>
+          </div>
+        )}
+        
+        {/* Controles de Paginación */}
+        {!loading && filteredLogs.length > 0 && (
+          <div className="bg-slate-50 px-6 py-4 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-bold text-slate-500">
+            <div>
+              Mostrando {indexOfFirstItem + 1} a {Math.min(indexOfLastItem, filteredLogs.length)} de {filteredLogs.length} registros (Total: {logs.length})
+            </div>
+            <div className="flex items-center space-x-2">
+              <button
+                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                disabled={currentPage === 1}
+                className="px-3 py-1.5 bg-white hover:bg-slate-100 border border-slate-200 rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Anterior
+              </button>
+              <span className="px-3 py-1.5 bg-slate-100 rounded-lg text-slate-700">
+                Página {currentPage} de {totalPages}
+              </span>
+              <button
+                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                disabled={currentPage === totalPages || totalPages === 0}
+                className="px-3 py-1.5 bg-white hover:bg-slate-100 border border-slate-200 rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Siguiente
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
 
-      {/* Modal de Edición */}
+      {/* MODAL PARA EDITAR LOG */}
       {showModal && editingLog && (
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-          <div style={{ backgroundColor: 'white', padding: '25px', borderRadius: '8px', width: '400px' }}>
-            <h3 style={{ marginTop: 0 }}>Editar Registro</h3>
-            <p style={{ fontSize: '12px', color: '#6c757d', marginBottom: '15px' }}>Orden: {editingLog.ORDER_NUMBER}</p>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fade-in">
+          <div className="bg-white w-full max-w-md rounded-2xl shadow-2xl border border-slate-200 overflow-hidden transform transition-all duration-300">
             
-            <form onSubmit={handleUpdate} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+            {/* Header del modal */}
+            <div className="bg-slate-900 text-white p-5 flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <Edit2 className="w-5 h-5 text-amber-400" />
+                <span className="font-extrabold text-sm uppercase tracking-wider">Editar Registro</span>
+              </div>
+              <button 
+                onClick={handleCloseEdit}
+                className="text-slate-400 hover:text-white font-bold text-lg"
+              >
+                ×
+              </button>
+            </div>
+
+            {/* Formulario del Modal */}
+            <form onSubmit={handleUpdate} className="p-6 space-y-4">
+              <p className="text-xs text-slate-500 mb-4 border-b border-slate-100 pb-2">
+                Orden: <strong className="text-slate-800 font-mono">{editingLog.ORDER_NUMBER}</strong>
+              </p>
+              
               <div>
-                <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>Cantidad Declarada:</label>
-                <input 
-                  type="number" 
-                  name="newCantidad" 
-                  value={formData.newCantidad} 
-                  onChange={handleFormChange} 
-                  min="1"
-                  style={{ width: '100%', padding: '8px', boxSizing: 'border-box' }}
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">
+                  Cantidad Declarada
+                </label>
+                <input
+                  type="number"
+                  name="newCantidad"
                   required
+                  min="1"
+                  value={formData.newCantidad}
+                  onChange={handleFormChange}
+                  className="block w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 transition"
                 />
               </div>
 
               <div>
-                <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>Estado del Registro:</label>
-                <select 
-                  name="newEstado" 
-                  value={formData.newEstado} 
-                  onChange={handleFormChange} 
-                  style={{ width: '100%', padding: '8px', boxSizing: 'border-box' }}
-                  required
-                >
-                  <option value="0">Pendiente (0)</option>
-                  <option value="1">Completado (1)</option>
-                  <option value="2">Error (2)</option>
-                  <option value="3">En revisión (3)</option>
-                </select>
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">
+                  Estado del Registro
+                </label>
+                <div className="relative">
+                  <select
+                    name="newEstado"
+                    value={formData.newEstado}
+                    onChange={handleFormChange}
+                    className="block w-full pl-4 pr-10 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 transition appearance-none font-medium"
+                  >
+                    <option value="0">Pendiente (0)</option>
+                    <option value="1">Completado (1)</option>
+                    <option value="2">Error (2)</option>
+                    <option value="3">En revisión (3)</option>
+                  </select>
+                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-500">
+                    <ChevronDown className="w-4 h-4" />
+                  </div>
+                </div>
               </div>
 
-              <div style={{ display: 'flex', gap: '10px', marginTop: '15px' }}>
-                <button type="button" onClick={handleCloseEdit} style={{ flex: 1, padding: '10px', backgroundColor: '#6c757d', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
+              {/* Botones de acción del Modal */}
+              <div className="flex items-center justify-end space-x-3 pt-4 border-t border-slate-100">
+                <button
+                  type="button"
+                  onClick={handleCloseEdit}
+                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-lg text-xs uppercase tracking-wider transition"
+                >
                   Cancelar
                 </button>
-                <button type="submit" style={{ flex: 1, padding: '10px', backgroundColor: '#007bff', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
+                <button
+                  type="submit"
+                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-extrabold rounded-lg text-xs uppercase tracking-wider transition shadow-md shadow-blue-600/15"
+                >
                   Guardar Cambios
                 </button>
               </div>
             </form>
+
           </div>
         </div>
       )}
