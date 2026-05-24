@@ -19,7 +19,6 @@ const GestionUsuarios = () => {
   const [loading, setLoading] = useState(false);
   const [notification, setNotification] = useState(null);
   
-  // Estado del Modal
   const [showModal, setShowModal] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [formData, setFormData] = useState({
@@ -59,7 +58,7 @@ const GestionUsuarios = () => {
       setEditingId(usuario.id);
       setFormData({
         mail: usuario.mail,
-        password: '', // No mostramos la contraseña actual
+        password: '',
         idrol: usuario.idrol,
         estado: usuario.estado
       });
@@ -125,7 +124,6 @@ const GestionUsuarios = () => {
   return (
     <div className="space-y-6 animate-fade-in max-w-7xl mx-auto pt-6 pb-12">
       
-      {/* Sistema de Notificaciones Toast */}
       {notification && (
         <div className="fixed top-5 right-5 z-50 flex items-center p-4 mb-4 text-sm rounded-xl shadow-xl border animate-slide-in-right bg-white dark:bg-slate-800 max-w-md transition-all duration-300"
           style={{
@@ -146,7 +144,6 @@ const GestionUsuarios = () => {
         </div>
       )}
 
-      {/* Header de la sección */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h2 className="text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">Gestión de Usuarios</h2>
@@ -162,7 +159,6 @@ const GestionUsuarios = () => {
         </button>
       </div>
 
-      {/* TABLA DE USUARIOS */}
       <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200/80 dark:border-slate-700 overflow-hidden transition-colors duration-300">
         {loading ? (
           <div className="p-8 text-center text-slate-500 dark:text-slate-400 font-medium">Cargando usuarios...</div>
@@ -189,12 +185,10 @@ const GestionUsuarios = () => {
                   usuarios.map((u) => (
                     <tr key={u.id} className="hover:bg-slate-50/70 dark:hover:bg-slate-700/50 transition-all duration-150">
                       
-                      {/* ID */}
                       <td className="py-4 px-6 whitespace-nowrap text-slate-400 font-mono text-xs">
                         #{u.id}
                       </td>
 
-                      {/* Usuario / Correo */}
                       <td className="py-4 px-6 whitespace-nowrap">
                         <div className="flex items-center space-x-3">
                           <div className="w-9 h-9 bg-gradient-to-tr from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center text-white text-xs font-bold shadow-sm uppercase">
@@ -204,7 +198,6 @@ const GestionUsuarios = () => {
                         </div>
                       </td>
 
-                      {/* Rol */}
                       <td className="py-4 px-6 whitespace-nowrap">
                         <span className={`inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-extrabold ${
                           u.rol_nombre === 'SUPERADMIN' 
@@ -219,7 +212,6 @@ const GestionUsuarios = () => {
                         </span>
                       </td>
 
-                      {/* Estado */}
                       <td className="py-4 px-6 whitespace-nowrap text-center">
                         {u.estado ? (
                           <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-800">
@@ -234,7 +226,6 @@ const GestionUsuarios = () => {
                         )}
                       </td>
 
-                      {/* Acciones */}
                       <td className="py-4 px-6 whitespace-nowrap text-right">
                         <div className="flex items-center justify-end space-x-2">
                           <button
@@ -261,12 +252,10 @@ const GestionUsuarios = () => {
         )}
       </div>
 
-      {/* MODAL PARA AGREGAR/EDITAR USUARIO */}
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fade-in">
           <div className="bg-white dark:bg-slate-800 w-full max-w-md rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden transform transition-all duration-300">
             
-            {/* Header del modal */}
             <div className="bg-slate-900 text-white p-5 flex items-center justify-between">
               <div className="flex items-center space-x-2">
                 {editingId ? <Edit2 className="w-5 h-5 text-amber-400" /> : <Users className="w-5 h-5 text-emerald-400" />}
@@ -282,7 +271,6 @@ const GestionUsuarios = () => {
               </button>
             </div>
 
-            {/* Formulario del Modal */}
             <form onSubmit={handleSubmit} className="p-6 space-y-4">
               <div>
                 <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-1.5">
@@ -350,7 +338,6 @@ const GestionUsuarios = () => {
                 </label>
               </div>
 
-              {/* Botones de acción del Modal */}
               <div className="flex items-center justify-end space-x-3 pt-4 border-t border-slate-100 dark:border-slate-700">
                 <button
                   type="button"

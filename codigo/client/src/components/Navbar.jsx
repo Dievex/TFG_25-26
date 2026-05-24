@@ -27,7 +27,6 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           
-          {/* Logo y Marca */}
           <div className="flex items-center space-x-3 cursor-pointer">
             <div className="flex items-center justify-center p-2 bg-blue-600 rounded-xl text-white">
               <Activity className="w-5 h-5" />
@@ -37,7 +36,6 @@ const Navbar = () => {
             </span>
           </div>
 
-          {/* Navegación Principal */}
           <nav className="hidden md:flex space-x-1">
             <NavLink
               to="/declaracion"
@@ -80,7 +78,6 @@ const Navbar = () => {
             )}
           </nav>
 
-          {/* Perfil de Usuario, Tema y Cerrar Sesión */}
           <div className="flex items-center space-x-3 sm:space-x-4">
             
             <button
@@ -114,7 +111,6 @@ const Navbar = () => {
         </div>
       </div>
 
-      {/* Menú Móvil */}
       <div className="flex md:hidden border-t border-slate-800 bg-slate-900 px-2 py-1 justify-around">
         <NavLink
           to="/declaracion"

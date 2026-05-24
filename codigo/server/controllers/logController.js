@@ -37,7 +37,6 @@ exports.exportarCSV = async (req, res) => {
       return res.status(404).json({ error: 'No hay registros para exportar' });
     }
     
-    // Crear contenido CSV
     const headers = ['Fecha', 'Puesto', 'Orden', 'Referencia', 'Cantidad', 'Estado'];
     const rows = records.map(log => {
       const fecha = new Date(log.DATE_TIME).toLocaleString('es-ES');
@@ -59,7 +58,7 @@ exports.exportarCSV = async (req, res) => {
     
     res.setHeader('Content-Type', 'text/csv; charset=utf-8');
     res.setHeader('Content-Disposition', 'attachment; filename="logs_export.csv"');
-    res.send(Buffer.from('\uFEFF' + csvContent, 'utf-8')); // \uFEFF para BOM UTF-8
+    res.send(Buffer.from('\uFEFF' + csvContent, 'utf-8'));
   } catch (error) {
     console.error('Error exportarCSV:', error);
     res.status(500).json({ error: 'Error al exportar CSV' });

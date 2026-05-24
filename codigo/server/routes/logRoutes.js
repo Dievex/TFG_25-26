@@ -3,7 +3,6 @@ const router = express.Router();
 const logController = require('../controllers/logController');
 const { verifyToken, checkRole } = require('../middleware/auth');
 
-// Protegido para Responsable o Administrador
 router.use(verifyToken);
 router.use(checkRole(['Responsable', 'Administrador']));
 

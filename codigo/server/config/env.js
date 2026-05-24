@@ -8,7 +8,7 @@ module.exports = {
     server: process.env.DB_SERVER,
     database: process.env.DB_NAME,
     options: {
-      encrypt: false, // set to true si usas Azure
+      encrypt: false,
       trustServerCertificate: true,
     },
   },

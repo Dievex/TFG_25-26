@@ -19,7 +19,7 @@ class Registro {
       .input('nombrePuesto', sql.VarChar, nombrePuesto)
       .input('cantidad', sql.Int, cantidad)
       .input('numeroReferencia', sql.VarChar, numeroReferencia)
-      .input('estado', sql.Int, 0) // 0 = Pendiente
+      .input('estado', sql.Int, 0)
       .input('idPuesto', sql.Int, idPuesto)
       .query(`
         INSERT INTO RPA_GALIAS_PRE_2.SNC.snc_sdp_order_order_x_line_spot_sap 

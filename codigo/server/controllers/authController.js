@@ -21,14 +21,12 @@ exports.login = async (req, res) => {
       return res.status(403).json({ error: 'Usuario inactivo. Contacta con el administrador' });
     }
 
-    // Verificar contraseña
     const passwordMatch = await bcrypt.compare(password, usuario.password);
     
     if (!passwordMatch) {
       return res.status(401).json({ error: 'Credenciales incorrectas' });
     }
 
-    // Generar JWT
     const payload = {
       userId: usuario.id,
       rol: usuario.rol_nombre,

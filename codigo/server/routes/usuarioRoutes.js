@@ -3,7 +3,6 @@ const router = express.Router();
 const usuarioController = require('../controllers/usuarioController');
 const { verifyToken, checkRole } = require('../middleware/auth');
 
-// Solo Administrador puede acceder a estas rutas
 router.use(verifyToken);
 router.use(checkRole(['Administrador']));
 

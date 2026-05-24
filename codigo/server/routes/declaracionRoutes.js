@@ -3,7 +3,6 @@ const router = express.Router();
 const declaracionController = require('../controllers/declaracionController');
 const { verifyToken, checkRole } = require('../middleware/auth');
 
-// Todos estos endpoints requieren estar logueado como Operario (o superior)
 router.use(verifyToken);
 router.use(checkRole(['Operario', 'Responsable', 'Administrador']));
 

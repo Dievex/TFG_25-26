@@ -44,7 +44,6 @@ const Login = () => {
   return (
     <div className="relative min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-slate-900 via-[#1e293b] to-slate-900 overflow-hidden font-sans selection:bg-blue-600 selection:text-white antialiased">
       
-      {/* Botón de Tema Flotante */}
       <button
         onClick={toggleTheme}
         className="absolute top-6 right-6 z-50 p-3 bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 text-white rounded-full shadow-lg transition-all duration-200"
@@ -53,13 +52,11 @@ const Login = () => {
         {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
       </button>
 
-      {/* Círculos decorativos de fondo con desenfoque */}
       <div className="absolute -top-40 -left-40 w-96 h-96 bg-blue-600 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse"></div>
       <div className="absolute -bottom-40 -right-40 w-96 h-96 bg-emerald-600 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse delay-700"></div>
       
       <div className="relative w-full max-w-lg bg-white/95 dark:bg-slate-900/95 backdrop-blur-md rounded-2xl shadow-2xl border border-white/20 dark:border-slate-700/50 p-8 sm:p-10 transition-all duration-300 transform hover:scale-[1.01]">
         
-        {/* Header de la tarjeta */}
         <div className="text-center mb-8">
           <div className="inline-flex p-3 bg-blue-50 dark:bg-blue-500/10 rounded-2xl mb-4 text-blue-600 dark:text-blue-400 shadow-inner">
             <Activity className="w-8 h-8 animate-pulse" />
@@ -77,7 +74,6 @@ const Login = () => {
           </div>
         )}
 
-        {/* Formulario Principal */}
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-2">
@@ -125,7 +121,6 @@ const Login = () => {
           </button>
         </form>
 
-        {/* Separador */}
         <div className="relative my-8">
           <div className="absolute inset-0 flex items-center" aria-hidden="true">
             <div className="w-full border-t border-slate-200 dark:border-slate-700"></div>
@@ -135,7 +130,6 @@ const Login = () => {
           </div>
         </div>
 
-        {/* Botón de Acceso Rápido */}
         <button
           onClick={handleOperarioRapido}
           className="w-full group flex items-center justify-between p-4 bg-emerald-50 dark:bg-emerald-900/20 hover:bg-emerald-100 dark:hover:bg-emerald-900/40 border border-emerald-200/60 dark:border-emerald-800/60 rounded-xl text-emerald-800 dark:text-emerald-400 font-bold transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0"
@@ -152,7 +146,6 @@ const Login = () => {
           <ChevronDown className="w-5 h-5 -rotate-90 text-emerald-600 dark:text-emerald-500 transition-transform duration-200 group-hover:translate-x-1" />
         </button>
 
-        {/* Footer de créditos */}
         <div className="text-center mt-8 text-xs text-slate-400 font-medium">
           © {new Date().getFullYear()} Maflow Automotive. Todos los derechos reservados.
         </div>

@@ -29,7 +29,6 @@ exports.createUsuario = async (req, res) => {
       return res.status(400).json({ error: 'Faltan datos obligatorios' });
     }
 
-    // Verificar si el correo ya existe
     const checkUser = await Usuario.findByMail(mail);
       
     if (checkUser) {

@@ -16,24 +16,20 @@ import {
 } from 'lucide-react';
 
 const DeclaracionForm = () => {
-  // Estado de las opciones
   const [puestos, setPuestos] = useState([]);
   const [ordenes, setOrdenes] = useState([]);
   const [referencias, setReferencias] = useState([]);
   const [historial, setHistorial] = useState([]);
 
-  // Estado del formulario
   const [idPuesto, setIdPuesto] = useState('');
   const [idOrden, setIdOrden] = useState('');
   const [idReferencia, setIdReferencia] = useState('');
   const [cantidad, setCantidad] = useState('');
   const [cantidadAnterior, setCantidadAnterior] = useState(0);
 
-  // Control del flujo secuencial de guardado
   const [isSaved, setIsSaved] = useState(false);
   const [showLog, setShowLog] = useState(false);
 
-  // Estados de carga y mensajes
   const [loading, setLoading] = useState(false);
   const [notification, setNotification] = useState(null);
 
@@ -153,7 +149,6 @@ const DeclaracionForm = () => {
       await declaracionService.enviarASap();
       triggerNotification('¡Señal enviada a SAP (Robot activado)!', 'success');
       
-      // Limpiar formulario y resetear estado
       setIdPuesto('');
       setIdOrden('');
       setIdReferencia('');
@@ -170,7 +165,6 @@ const DeclaracionForm = () => {
     }
   };
 
-  // Verifica si hay algo pendiente de enviar a SAP en el historial
   const hayPendientes = historial.some(h => h.SAP_STATUS === 0);
 
   const getStatusBadge = (status) => {
@@ -186,7 +180,6 @@ const DeclaracionForm = () => {
   return (
     <div className="max-w-3xl mx-auto animate-fade-in pb-12 pt-6 relative">
       
-      {/* Sistema de Notificaciones Toast */}
       {notification && (
         <div className="fixed top-5 right-5 z-50 flex items-center p-4 mb-4 text-sm rounded-xl shadow-xl border animate-slide-in-right bg-white dark:bg-slate-800 max-w-md transition-all duration-300"
           style={{
@@ -207,7 +200,6 @@ const DeclaracionForm = () => {
         </div>
       )}
 
-      {/* Banner de Bienvenida */}
       <div className="bg-gradient-to-r from-blue-600 to-indigo-700 dark:from-blue-800 dark:to-indigo-900 rounded-2xl p-6 sm:p-8 text-white shadow-lg mb-8 relative overflow-hidden">
         <div className="absolute right-0 bottom-0 opacity-10 translate-x-10 translate-y-10 pointer-events-none">
           <Database className="w-80 h-80" />
@@ -223,11 +215,9 @@ const DeclaracionForm = () => {
         </div>
       </div>
 
-      {/* Formulario Principal de Declaración */}
       <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200/80 dark:border-slate-700 p-6 sm:p-8 transition-colors duration-300">
         <form onSubmit={handleGuardar} className="space-y-6">
           
-          {/* Campo: Puesto */}
           <div>
             <label className="flex items-center space-x-2 text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-2.5">
               <Building className="w-4 h-4 text-blue-500 dark:text-blue-400" />
@@ -251,10 +241,8 @@ const DeclaracionForm = () => {
             </div>
           </div>
 
-          {/* Dos Columnas: Orden y Referencia */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             
-            {/* Campo: Orden */}
             <div>
               <label className="flex items-center space-x-2 text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-2.5">
                 <Hash className="w-4 h-4 text-blue-500 dark:text-blue-400" />
@@ -279,7 +267,6 @@ const DeclaracionForm = () => {
               </div>
             </div>
 
-            {/* Campo: Referencia */}
             <div>
               <label className="flex items-center space-x-2 text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-2.5">
                 <Sliders className="w-4 h-4 text-blue-500 dark:text-blue-400" />
@@ -313,7 +300,6 @@ const DeclaracionForm = () => {
             </div>
           )}
 
-          {/* Campo: Cantidad a declarar */}
           <div>
             <label className="flex items-center space-x-2 text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-2.5">
               <Activity className="w-4 h-4 text-blue-500 dark:text-blue-400" />
@@ -331,7 +317,6 @@ const DeclaracionForm = () => {
             />
           </div>
 
-          {/* GUÍA DE FLUJO INTERACTIVO (STEPPER) */}
           <div className="bg-slate-50/80 dark:bg-slate-900/50 rounded-2xl p-4 border border-slate-200/60 dark:border-slate-700 mt-8 space-y-3">
             <div className="flex items-center justify-between">
               <span className="text-xs font-extrabold uppercase tracking-widest text-slate-500 dark:text-slate-400">
@@ -349,7 +334,6 @@ const DeclaracionForm = () => {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-              {/* Indicador Paso 1 */}
               <div className={`p-3 rounded-xl border flex items-start space-x-3 transition-all duration-200 ${
                 isSaved 
                   ? 'bg-emerald-50/60 dark:bg-emerald-900/10 border-emerald-200 dark:border-emerald-800 text-emerald-900 dark:text-emerald-300' 
@@ -366,7 +350,6 @@ const DeclaracionForm = () => {
                 </div>
               </div>
 
-              {/* Indicador Paso 2 */}
               <div className={`p-3 rounded-xl border flex items-start space-x-3 transition-all duration-200 ${
                 isSaved || hayPendientes
                   ? 'bg-blue-50/50 dark:bg-blue-900/10 border-blue-100 dark:border-blue-800 text-blue-900 dark:text-blue-300' 
@@ -385,10 +368,8 @@ const DeclaracionForm = () => {
             </div>
           </div>
 
-          {/* Botones de Acción Secuenciales */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
             
-            {/* BOTÓN PASO 1 */}
             <div className="relative group">
               <span className="absolute -top-3 left-4 px-2 py-0.5 bg-white dark:bg-slate-800 text-[10px] font-extrabold text-blue-600 dark:text-blue-400 tracking-wider rounded border border-blue-200 dark:border-blue-800 shadow-sm z-10">
                 PASO 1: GUARDADO
@@ -416,7 +397,6 @@ const DeclaracionForm = () => {
               </button>
             </div>
 
-            {/* BOTÓN PASO 2 */}
             <div className="relative">
               <span className={`absolute -top-3 left-4 px-2 py-0.5 bg-white dark:bg-slate-800 text-[10px] font-extrabold tracking-wider rounded border shadow-sm z-10 transition-colors duration-200 ${
                 (isSaved || hayPendientes)
@@ -452,7 +432,6 @@ const DeclaracionForm = () => {
 
           </div>
 
-          {/* Mensaje de Ayuda dinámico para operarios */}
           {(!isSaved && !hayPendientes) && (
             <div className="flex items-center space-x-2 text-xs font-bold text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/10 p-3 rounded-xl border border-amber-200/60 dark:border-amber-800/50 transition-all duration-200">
               <ShieldAlert className="w-4 h-4 text-amber-600 dark:text-amber-500 shrink-0" />
@@ -463,7 +442,6 @@ const DeclaracionForm = () => {
         </form>
       </div>
 
-      {/* Botón flotante para ver Log */}
       <button 
         onClick={() => setShowLog(!showLog)}
         className="fixed bottom-6 right-6 z-40 flex items-center space-x-2 bg-slate-900 dark:bg-slate-700 hover:bg-slate-800 dark:hover:bg-slate-600 text-white px-4 py-3 rounded-full shadow-lg shadow-slate-900/20 transition-all duration-200 active:scale-95"
@@ -472,7 +450,6 @@ const DeclaracionForm = () => {
         <span className="text-sm font-bold">{showLog ? 'Ocultar Registros' : 'Ver Log Reciente'}</span>
       </button>
 
-      {/* Pop up del Log */}
       {showLog && (
         <div className="fixed bottom-20 right-6 z-40 w-80 max-h-96 overflow-y-auto bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 animate-slide-in-right">
           <div className="sticky top-0 bg-slate-50 dark:bg-slate-900/80 p-4 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between backdrop-blur-sm">

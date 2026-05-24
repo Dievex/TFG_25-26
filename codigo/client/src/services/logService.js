@@ -23,7 +23,7 @@ export const exportarCSV = async (filters) => {
   if (filters.referencia) params.append('referencia', filters.referencia);
 
   const response = await api.get(`/log/exportar?${params.toString()}`, {
-    responseType: 'blob', // Importante para manejar archivos
+    responseType: 'blob',
   });
   return response.data;
 };

@@ -15,16 +15,13 @@ export const AuthProvider = ({ children }) => {
       setToken(token);
       setUser({ ...usuario, token });
       
-      return usuario; // Para redirigir en el componente
+      return usuario;
     } catch (error) {
       throw new Error(error.response?.data?.error || 'Error al iniciar sesión');
     }
   };
 
   const loginOperarioDirecto = async () => {
-    // Según instrucciones, un acceso rápido para Operario
-    // Aquí idealmente haríamos una llamada a un endpoint específico o usaríamos
-    // credenciales genéricas de planta. Como ejemplo, usamos unas fijas.
     return login('operario@maflow.com', '123456');
   };
 

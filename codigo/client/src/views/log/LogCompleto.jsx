@@ -17,11 +17,9 @@ const LogCompleto = () => {
   const [loading, setLoading] = useState(false);
   const [notification, setNotification] = useState(null);
 
-  // Paginación
   const [currentPage, setCurrentPage] = useState(1);
   const ITEMS_PER_PAGE = 10;
 
-  // Filtros
   const [filters, setFilters] = useState({
     estado: 'Todos',
     puesto: '',
@@ -29,7 +27,6 @@ const LogCompleto = () => {
     referencia: ''
   });
 
-  // Estado del Modal de Edición
   const [showModal, setShowModal] = useState(false);
   const [editingLog, setEditingLog] = useState(null);
   const [formData, setFormData] = useState({
@@ -66,7 +63,7 @@ const LogCompleto = () => {
     }
 
     setFilteredLogs(result);
-    setCurrentPage(1); // Resetear a la primera página al filtrar
+    setCurrentPage(1);
   };
 
   useEffect(() => {
@@ -122,13 +119,11 @@ const LogCompleto = () => {
     }
   };
 
-  // --- Lógica Paginación ---
   const indexOfLastItem = currentPage * ITEMS_PER_PAGE;
   const indexOfFirstItem = indexOfLastItem - ITEMS_PER_PAGE;
   const currentLogs = filteredLogs.slice(indexOfFirstItem, indexOfLastItem);
   const totalPages = Math.ceil(filteredLogs.length / ITEMS_PER_PAGE);
 
-  // --- Lógica del Modal (Editar) ---
   const handleOpenEdit = (log) => {
     setEditingLog(log);
     setFormData({
@@ -165,7 +160,6 @@ const LogCompleto = () => {
     }
   };
 
-  // --- Lógica Eliminar ---
   const handleDelete = async (log) => {
     if (window.confirm(`¿Seguro que deseas eliminar el registro de la orden ${log.ORDER_NUMBER}?`)) {
       try {
@@ -200,7 +194,6 @@ const LogCompleto = () => {
   return (
     <div className="space-y-6 animate-fade-in max-w-7xl mx-auto pt-6 pb-12">
       
-      {/* Sistema de Notificaciones Toast */}
       {notification && (
         <div className="fixed top-5 right-5 z-50 flex items-center p-4 mb-4 text-sm rounded-xl shadow-xl border animate-slide-in-right bg-white max-w-md transition-all duration-300"
           style={{
@@ -221,14 +214,12 @@ const LogCompleto = () => {
         </div>
       )}
 
-      {/* Header de la sección */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h2 className="text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">Log de Ejecución</h2>
           <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">Monitorea las declaraciones enviadas, sus estados de procesamiento por el robot RPA.</p>
         </div>
         
-        {/* Resumen de estado rápido */}
         <div className="flex items-center space-x-3 text-xs font-bold">
           <span className="px-3 py-1.5 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-800 dark:text-emerald-400 rounded-full flex items-center space-x-1">
             <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span>
@@ -245,7 +236,6 @@ const LogCompleto = () => {
         </div>
       </div>
 
-      {/* CAJA DE FILTROS */}
       <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200/80 dark:border-slate-700 p-5 shadow-sm space-y-4 transition-colors duration-300">
         <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-700 pb-3">
           <div className="flex items-center space-x-2 text-slate-800 dark:text-slate-200 font-bold text-sm">
@@ -262,7 +252,6 @@ const LogCompleto = () => {
         </div>
         
         <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
-          {/* Filtro: Estado */}
           <div>
             <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">Estado</label>
             <div className="relative">
@@ -284,7 +273,6 @@ const LogCompleto = () => {
             </div>
           </div>
 
-          {/* Filtro: Puesto */}
           <div>
             <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">Puesto</label>
             <div className="relative">
@@ -300,7 +288,6 @@ const LogCompleto = () => {
             </div>
           </div>
 
-          {/* Filtro: Orden */}
           <div>
             <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">Orden</label>
             <div className="relative">
@@ -316,7 +303,6 @@ const LogCompleto = () => {
             </div>
           </div>
 
-          {/* Filtro: Referencia */}
           <div>
             <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">Referencia</label>
             <div className="relative">
@@ -334,7 +320,6 @@ const LogCompleto = () => {
         </div>
       </div>
 
-      {/* TABLA PRINCIPAL DE DATOS */}
       <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200/80 dark:border-slate-700 overflow-hidden transition-colors duration-300">
         {loading ? (
           <div className="p-8 text-center text-slate-500 dark:text-slate-400 font-medium">Cargando registros...</div>
@@ -357,37 +342,30 @@ const LogCompleto = () => {
                   currentLogs.map((log, index) => (
                     <tr key={index} className="hover:bg-slate-50/70 dark:hover:bg-slate-700/50 transition-all duration-150">
                       
-                      {/* Fecha */}
                       <td className="py-3.5 px-6 whitespace-nowrap text-slate-500 dark:text-slate-400 text-xs">
                         {new Date(log.DATE_TIME).toLocaleString('es-ES')}
                       </td>
 
-                      {/* Puesto */}
                       <td className="py-3.5 px-6 whitespace-nowrap">
                         <span className="text-slate-900 dark:text-slate-200 font-semibold">{log.PRODUCTION_LINE || '—'}</span>
                       </td>
 
-                      {/* Orden */}
                       <td className="py-3.5 px-6 whitespace-nowrap text-slate-600 dark:text-slate-300 font-mono text-xs">
                         {log.ORDER_NUMBER}
                       </td>
 
-                      {/* Referencia */}
                       <td className="py-3.5 px-6 whitespace-nowrap text-slate-600 dark:text-slate-300 font-mono text-xs">
                         {log.REFERENCE}
                       </td>
 
-                      {/* Cantidad */}
                       <td className="py-3.5 px-6 whitespace-nowrap text-center text-slate-900 dark:text-slate-100 font-bold">
                         {log.QUANTITY_MANUFACTURED}
                       </td>
 
-                      {/* Estado */}
                       <td className="py-3.5 px-6 whitespace-nowrap text-center">
                         {getStatusBadge(log.SAP_STATUS)}
                       </td>
 
-                      {/* Acciones */}
                       <td className="py-3.5 px-6 whitespace-nowrap text-right">
                         <div className="flex items-center justify-end space-x-1">
                           <button
@@ -421,7 +399,6 @@ const LogCompleto = () => {
           </div>
         )}
         
-        {/* Controles de Paginación */}
         {!loading && filteredLogs.length > 0 && (
           <div className="bg-slate-50 dark:bg-slate-900/50 px-6 py-4 border-t border-slate-100 dark:border-slate-700 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-bold text-slate-500 dark:text-slate-400">
             <div>
@@ -450,12 +427,10 @@ const LogCompleto = () => {
         )}
       </div>
 
-      {/* MODAL PARA EDITAR LOG */}
       {showModal && editingLog && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fade-in">
           <div className="bg-white dark:bg-slate-800 w-full max-w-md rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden transform transition-all duration-300">
             
-            {/* Header del modal */}
             <div className="bg-slate-900 text-white p-5 flex items-center justify-between">
               <div className="flex items-center space-x-2">
                 <Edit2 className="w-5 h-5 text-amber-400" />
@@ -469,7 +444,6 @@ const LogCompleto = () => {
               </button>
             </div>
 
-            {/* Formulario del Modal */}
             <form onSubmit={handleUpdate} className="p-6 space-y-4">
               <p className="text-xs text-slate-500 dark:text-slate-400 mb-4 border-b border-slate-100 dark:border-slate-700 pb-2">
                 Orden: <strong className="text-slate-800 dark:text-slate-200 font-mono">{editingLog.ORDER_NUMBER}</strong>
@@ -512,7 +486,6 @@ const LogCompleto = () => {
                 </div>
               </div>
 
-              {/* Botones de acción del Modal */}
               <div className="flex items-center justify-end space-x-3 pt-4 border-t border-slate-100 dark:border-slate-700">
                 <button
                   type="button"

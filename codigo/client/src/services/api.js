@@ -1,6 +1,5 @@
 import axios from 'axios';
 
-// Guardar el JWT en memoria (no en localStorage por seguridad)
 let inMemoryToken = null;
 
 export const setToken = (token) => {

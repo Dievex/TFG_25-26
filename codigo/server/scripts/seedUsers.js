@@ -7,7 +7,6 @@ async function seedUsers() {
     const pool = await poolPromise;
     console.log('Conectado a la base de datos para seeding...');
 
-    // 1. Asegurar que existen los roles base (Administrador, Operario, Responsable)
     const rolesBase = [
       { nombre: 'Administrador', desc: 'Administrador del sistema' },
       { nombre: 'Operario', desc: 'Operario de planta' },
@@ -33,7 +32,6 @@ async function seedUsers() {
       }
     }
 
-    // 2. Crear usuario administrador
     const adminMail = 'admin@maflow.com';
     const adminPasswordPlain = 'admin123';
 
@@ -61,7 +59,6 @@ async function seedUsers() {
       console.log(`Usuario administrador creado con éxito.`);
     }
 
-    // 3. Crear usuario operario de prueba (para el botón de acceso rápido)
     const opMail = 'operario@maflow.com';
     const opPasswordPlain = '123456';
 
