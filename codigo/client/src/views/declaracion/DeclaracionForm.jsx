@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '../../context/AuthContext';
 import * as declaracionService from '../../services/declaracionService';
 import { 
   Building, 
@@ -17,8 +16,6 @@ import {
 } from 'lucide-react';
 
 const DeclaracionForm = () => {
-  const { user } = useAuth();
-  
   // Estado de las opciones
   const [puestos, setPuestos] = useState([]);
   const [ordenes, setOrdenes] = useState([]);
@@ -40,18 +37,6 @@ const DeclaracionForm = () => {
   const [loading, setLoading] = useState(false);
   const [notification, setNotification] = useState(null);
 
-  useEffect(() => {
-    cargarPuestos();
-    cargarHistorial();
-  }, []);
-
-  const triggerNotification = (message, type = 'success') => {
-    setNotification({ message, type });
-    setTimeout(() => {
-      setNotification(null);
-    }, 4000);
-  };
-
   const cargarPuestos = async () => {
     try {
       const data = await declaracionService.getPuestos();
@@ -68,6 +53,18 @@ const DeclaracionForm = () => {
     } catch (error) {
       console.error('Error al cargar historial', error);
     }
+  };
+
+  useEffect(() => {
+    cargarPuestos();
+    cargarHistorial();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const triggerNotification = (message, type = 'success') => {
+    setNotification({ message, type });
+    setTimeout(() => {
+      setNotification(null);
+    }, 4000);
   };
 
   const handlePuestoChange = async (e) => {
@@ -143,7 +140,7 @@ const DeclaracionForm = () => {
       const cantAnterior = await declaracionService.getCantidadAnterior(idOrden);
       setCantidadAnterior(cantAnterior);
       
-    } catch (error) {
+    } catch {
       triggerNotification('Error al guardar la declaración.', 'error');
     } finally {
       setLoading(false);
@@ -166,7 +163,7 @@ const DeclaracionForm = () => {
       setReferencias([]);
       setIsSaved(false);
       cargarHistorial();
-    } catch (error) {
+    } catch {
       triggerNotification('Error al activar el robot.', 'error');
     } finally {
       setLoading(false);

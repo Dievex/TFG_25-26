@@ -14,3 +14,16 @@ export const deleteLog = async (data) => {
   const response = await api.delete('/log', { data });
   return response.data;
 };
+
+export const exportarCSV = async (filters) => {
+  const params = new URLSearchParams();
+  if (filters.estado) params.append('estado', filters.estado);
+  if (filters.puesto) params.append('puesto', filters.puesto);
+  if (filters.orden) params.append('orden', filters.orden);
+  if (filters.referencia) params.append('referencia', filters.referencia);
+
+  const response = await api.get(`/log/exportar?${params.toString()}`, {
+    responseType: 'blob', // Importante para manejar archivos
+  });
+  return response.data;
+};

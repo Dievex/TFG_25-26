@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '../../context/AuthContext';
 import * as logService from '../../services/logService';
 import { 
   Filter, 
@@ -8,13 +7,11 @@ import {
   Edit2, 
   Trash2, 
   CheckCircle2, 
-  AlertCircle, 
-  Clock 
+  AlertCircle,
+  Download
 } from 'lucide-react';
 
 const LogCompleto = () => {
-  const { user } = useAuth();
-  
   const [logs, setLogs] = useState([]);
   const [filteredLogs, setFilteredLogs] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -40,20 +37,12 @@ const LogCompleto = () => {
     newEstado: ''
   });
 
-  useEffect(() => {
-    cargarLogs();
-  }, []);
-
-  useEffect(() => {
-    aplicarFiltros();
-  }, [logs, filters]);
-
   const cargarLogs = async () => {
     setLoading(true);
     try {
       const data = await logService.getLogs();
       setLogs(data);
-    } catch (error) {
+    } catch {
       triggerNotification('Error al cargar logs del servidor', 'error');
     } finally {
       setLoading(false);
@@ -79,6 +68,14 @@ const LogCompleto = () => {
     setFilteredLogs(result);
     setCurrentPage(1); // Resetear a la primera página al filtrar
   };
+
+  useEffect(() => {
+    cargarLogs();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    aplicarFiltros();
+  }, [logs, filters]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
@@ -163,7 +160,7 @@ const LogCompleto = () => {
       triggerNotification('Registro actualizado correctamente', 'success');
       handleCloseEdit();
       cargarLogs();
-    } catch (error) {
+    } catch {
       triggerNotification('Error al actualizar registro', 'error');
     }
   };
@@ -178,9 +175,25 @@ const LogCompleto = () => {
         });
         triggerNotification('Registro eliminado correctamente', 'success');
         cargarLogs();
-      } catch (error) {
+      } catch {
         triggerNotification('Error al eliminar registro', 'error');
       }
+    }
+  };
+
+  const handleExportar = async () => {
+    try {
+      const blob = await logService.exportarCSV(filters);
+      const url = window.URL.createObjectURL(new Blob([blob]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'logs_export.csv');
+      document.body.appendChild(link);
+      link.click();
+      link.parentNode.removeChild(link);
+      triggerNotification('Logs exportados correctamente', 'success');
+    } catch {
+      triggerNotification('Error al exportar logs', 'error');
     }
   };
 
@@ -234,9 +247,18 @@ const LogCompleto = () => {
 
       {/* CAJA DE FILTROS */}
       <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200/80 dark:border-slate-700 p-5 shadow-sm space-y-4 transition-colors duration-300">
-        <div className="flex items-center space-x-2 text-slate-800 dark:text-slate-200 font-bold text-sm border-b border-slate-100 dark:border-slate-700 pb-3">
-          <Filter className="w-4 h-4 text-blue-500 dark:text-blue-400" />
-          <span>Filtros de Búsqueda Avanzada</span>
+        <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-700 pb-3">
+          <div className="flex items-center space-x-2 text-slate-800 dark:text-slate-200 font-bold text-sm">
+            <Filter className="w-4 h-4 text-blue-500 dark:text-blue-400" />
+            <span>Filtros de Búsqueda Avanzada</span>
+          </div>
+          <button
+            onClick={handleExportar}
+            className="flex items-center space-x-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 px-3 py-1.5 rounded-lg text-xs font-bold transition-colors"
+          >
+            <Download className="w-3.5 h-3.5" />
+            <span>Exportar CSV</span>
+          </button>
         </div>
         
         <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">

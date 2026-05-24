@@ -8,6 +8,7 @@ router.use(verifyToken);
 router.use(checkRole(['Responsable', 'Administrador']));
 
 router.get('/', logController.getLogs);
+router.get('/exportar', logController.exportarCSV);
 router.put('/', logController.updateLog);
 router.delete('/', logController.deleteLog);
 

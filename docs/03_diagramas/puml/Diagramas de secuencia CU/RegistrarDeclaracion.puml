@@ -12,14 +12,14 @@ DeclaracionController -> PuestoTrabajo : getPuestosActivos()
 PuestoTrabajo --> DeclaracionController : listaPuestos
 DeclaracionController --> DeclaracionView : listaPuestos
 Operario -> DeclaracionView : selecciona puesto
-DeclaracionView -> DeclaracionController : cargarReferencias(puestoId)
-DeclaracionController -> Referencia : getReferenciasPorPuesto(puestoId)
-Referencia --> DeclaracionController : listaReferencias
-DeclaracionController --> DeclaracionView : listaReferencias
-Operario -> DeclaracionView : selecciona referencia
-DeclaracionView -> DeclaracionController : cargarOrdenes(referenciaId)
-DeclaracionController -> OrdenFabricacion : getOrdenesPorReferencia(refId)
+DeclaracionView -> DeclaracionController : cargarOrdenes(puestoId)
+DeclaracionController -> OrdenFabricacion : getOrdenesPorPuesto(puestoId)
 OrdenFabricacion --> DeclaracionController : listaOrdenes
 DeclaracionController --> DeclaracionView : listaOrdenes
+Operario -> DeclaracionView : selecciona orden
+DeclaracionView -> DeclaracionController : cargarReferencias(ordenId)
+DeclaracionController -> Referencia : getReferenciasPorOrden(ordenId)
+Referencia --> DeclaracionController : listaReferencias
+DeclaracionController --> DeclaracionView : listaReferencias
 Operario -> DeclaracionView : selecciona orden e introduce cantidad
 @enduml

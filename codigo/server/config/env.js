@@ -13,5 +13,6 @@ module.exports = {
     },
   },
   jwtSecret: process.env.JWT_SECRET || 'default_secret',
-  rpaUrl: process.env.RPA_URL
+  rpaUrl: process.env.RPA_URL,
+  rpaBatPath: process.env.RPA_BAT_PATH
 };
