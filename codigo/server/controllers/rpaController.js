@@ -1,7 +1,9 @@
 const { exec } = require('child_process');
+const env = require('../config/env');
 
 exports.activarRobot = (req, res) => {
-  const batPath = '"C:\\Users\\informatica\\Documents\\Documentos Diego\\TFG\\ejecucion.bat"';
+
+  const batPath = `"${env.rpaBatPath}"`;
   
   console.log(`--> Ejecutando archivo .bat del RPA en la ruta: ${batPath}`);
   
