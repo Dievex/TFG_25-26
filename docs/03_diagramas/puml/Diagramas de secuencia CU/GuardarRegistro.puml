@@ -1,0 +1,20 @@
+@startuml
+actor Operario
+participant DeclaracionView
+participant RegistroController
+participant Registro
+participant Galia
+participant MES
+
+Operario -> DeclaracionView : pulsa "Guardar Lote"
+DeclaracionView -> RegistroController : guardarLote(registrosDTO)
+RegistroController -> RegistroController : validarCamposObligatorios()
+RegistroController -> Registro : guardar() con estado=0
+Registro --> RegistroController : registrosPersistidos
+RegistroController -> Galia : crear(registroId) con estado=0
+Galia --> RegistroController : galiaCreada
+RegistroController -> MES : declararPiezas(registros)
+MES --> RegistroController : confirmacion
+RegistroController --> DeclaracionView : OK
+DeclaracionView --> Operario : confirmación + tabla actualizada
+@enduml

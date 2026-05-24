@@ -6,7 +6,7 @@ hide empty description
 
 [*] --> Inactivo
 
-Inactivo --> PeticionRecibida : petición HTTP entrante
+Inactivo --> PeticionRecibida : petición entrante
 
 PeticionRecibida --> VerificandoContrasena : inicia proceso
 

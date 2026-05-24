@@ -1,0 +1,25 @@
+@startuml
+actor Operario
+participant DeclaracionView
+participant DeclaracionController
+participant PuestoTrabajo
+participant Referencia
+participant OrdenFabricacion
+
+Operario -> DeclaracionView : accede a la pantalla
+DeclaracionView -> DeclaracionController : cargarPuestos()
+DeclaracionController -> PuestoTrabajo : getPuestosActivos()
+PuestoTrabajo --> DeclaracionController : listaPuestos
+DeclaracionController --> DeclaracionView : listaPuestos
+Operario -> DeclaracionView : selecciona puesto
+DeclaracionView -> DeclaracionController : cargarReferencias(puestoId)
+DeclaracionController -> Referencia : getReferenciasPorPuesto(puestoId)
+Referencia --> DeclaracionController : listaReferencias
+DeclaracionController --> DeclaracionView : listaReferencias
+Operario -> DeclaracionView : selecciona referencia
+DeclaracionView -> DeclaracionController : cargarOrdenes(referenciaId)
+DeclaracionController -> OrdenFabricacion : getOrdenesPorReferencia(refId)
+OrdenFabricacion --> DeclaracionController : listaOrdenes
+DeclaracionController --> DeclaracionView : listaOrdenes
+Operario -> DeclaracionView : selecciona orden e introduce cantidad
+@enduml

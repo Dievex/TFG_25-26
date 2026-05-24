@@ -1,0 +1,30 @@
+@startuml Diagrama1_Frontend
+
+top to bottom direction
+skinparam packageStyle rectangle
+skinparam defaultTextAlignment center
+skinparam nodesep 40
+skinparam ranksep 50
+
+package "Frontend (React)" {
+  package "auth" {
+    [LoginView]
+  }
+  package "declaracion" {
+    [DeclaracionView]
+  }
+  package "log" {
+    [LogView]
+  }
+  package "admin" {
+    [UsuarioCRUDView]
+  }
+}
+
+[LoginView]       ..> [authRoutes]        : API REST
+[DeclaracionView] ..> [declaracionRoutes] : API REST
+[DeclaracionView] ..> [registroRoutes]    : API REST
+[LogView]         ..> [logRoutes]         : API REST
+[UsuarioCRUDView] ..> [usuarioRoutes]     : API REST
+
+@enduml

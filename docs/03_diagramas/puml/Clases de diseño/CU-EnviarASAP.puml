@@ -1,0 +1,42 @@
+@startuml
+class DeclaracionView {
+  +habilitarBotonEnvio()
+  +mostrarEstadoEnvio(mensaje: String)
+  +actualizarEstadoRegistros(registros: List)
+  +mostrarErrorEnvio(mensaje: String)
+}
+
+class RpaController {
+  +enviarASAP(usuarioId: Integer) : Boolean
+  +consultarEstadoRegistros(usuarioId: Integer) : List<Registro>
+  +activarRobot() : Boolean
+}
+
+class Registro {
+  -estado: Integer
+  +getRegistrosPendientes(usuarioId: Integer) : List<Registro>
+}
+
+class ConfiguracionSAP {
+  -id: Integer
+  -puestoId: Integer
+  -usuario: String
+  -ultimoCambioPassword: DateTime
+  +getUrlServidor() : String
+}
+
+class LogEjecucion {
+  -id: Integer
+  -registroId: Integer
+  -tipoEvento: String
+  -mensaje: String
+  -fechaHora: DateTime
+  -exito: Boolean
+  +registrar(evento: String, mensaje: String)
+}
+
+DeclaracionView --> RpaController : solicita envío
+RpaController --> Registro : verifica pendientes
+RpaController --> ConfiguracionSAP : obtiene URL servidor
+RpaController --> LogEjecucion : registra evento
+@enduml

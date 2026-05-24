@@ -1,0 +1,40 @@
+@startuml
+class DeclaracionView {
+  +mostrarConfirmacionGuardado()
+  +mostrarErrorGuardado(mensaje: String)
+  +actualizarTablaRegistros(registros: List)
+}
+
+class RegistroController {
+  +guardarLote(registros: List<RegistroDTO>) : Boolean
+  +declararEnMES(registros: List<RegistroDTO>) : Boolean
+  +consultarRegistrosPorOperario(usuarioId: Integer) : List<Registro>
+}
+
+class Registro {
+  -id: Integer
+  -puestoId: Integer
+  -referenciaId: Integer
+  -ordenId: Integer
+  -cantidad: Integer
+  -estado: Integer
+  -fechaCreacion: DateTime
+  +guardar() : Boolean
+  +actualizarEstado(estado: Integer)
+}
+
+class Galia {
+  -id: Integer
+  -registroId: Integer
+  -numeroOrden: String
+  -referencia: String
+  -cantidad: Integer
+  -estado: Integer
+  -fechaProcesado: DateTime
+  +crear(registroId: Integer) : Galia
+}
+
+DeclaracionView --> RegistroController : guardar lote
+RegistroController --> Registro : persiste
+RegistroController --> Galia : crea entrada pendiente
+@enduml

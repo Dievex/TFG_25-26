@@ -24,7 +24,7 @@ end note
 
 note right of RobotRPA
   Actor sistema autónomo.
-  Activado por petición HTTP
+  Activado por petición
   desde la Interfaz Web.
 end note
 

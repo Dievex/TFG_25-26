@@ -1,0 +1,21 @@
+@startuml
+actor Operario
+participant DeclaracionView
+participant RpaController
+participant Registro
+participant ConfiguracionSAP
+participant LogEjecucion
+participant "Servidor" as Servidor
+
+Operario -> DeclaracionView : pulsa "Enviar a SAP"
+DeclaracionView -> RpaController : enviarASAP(usuarioId)
+RpaController -> Registro : getRegistrosPendientes(usuarioId)
+Registro --> RpaController : listaRegistrosPendientes
+RpaController -> ConfiguracionSAP : getUrlServidor()
+ConfiguracionSAP --> RpaController : urlServidor
+RpaController -> Servidor : HTTP POST /activar-robot
+Servidor --> RpaController : 200 OK
+RpaController -> LogEjecucion : registrar("ENVIO_SAP", "Robot activado")
+RpaController --> DeclaracionView : robotActivado=true
+DeclaracionView --> Operario : "Robot lanzado. Procesando..."
+@enduml

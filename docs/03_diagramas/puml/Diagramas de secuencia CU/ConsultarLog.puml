@@ -1,0 +1,35 @@
+@startuml
+actor Responsable
+participant LogView
+participant LogController
+participant LogEjecucion
+participant Registro
+participant Galia
+
+Responsable -> LogView : accede a la pantalla de log
+LogView -> LogController : consultarLogs(filtros vacíos)
+LogController -> Registro : getByFiltros({})
+Registro --> LogController : todosLosRegistros
+LogController -> Galia : getByFiltros({})
+Galia --> LogController : todasLasGalias
+LogController -> LogEjecucion : getByFiltros({})
+LogEjecucion --> LogController : todosLosLogs
+LogController --> LogView : datosCompletos
+LogView --> Responsable : tabla con todos los registros y estados
+
+Responsable -> LogView : aplica filtros (fecha, puesto, estado)
+LogView -> LogController : consultarLogs(filtros)
+LogController -> Registro : getByFiltros(filtros)
+Registro --> LogController : registrosFiltrados
+LogController -> LogEjecucion : getByFiltros(filtros)
+LogEjecucion --> LogController : logsFiltrados
+LogController --> LogView : datosFiltrados
+LogView --> Responsable : tabla filtrada actualizada
+
+opt El responsable exporta
+  Responsable -> LogView : pulsa "Exportar CSV"
+  LogView -> LogController : exportarCSV(filtros)
+  LogController --> LogView : archivoCSV
+  LogView --> Responsable : descarga fichero
+end
+@enduml

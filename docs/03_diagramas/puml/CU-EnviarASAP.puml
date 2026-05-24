@@ -4,7 +4,7 @@ title CU: Enviar a SAP
 actor Operario
 participant "InterfazWeb" as IW
 database "BaseDatos" as BD
-participant "ServidorEscucha" as SE
+participant "Servidor" as SE
 participant "RobotRPA" as RPA
 
 Operario -> IW : Pulsa botón "Enviar a SAP"
@@ -15,11 +15,11 @@ alt FA1: No hay registros con estado 0
     IW --> Operario : Aviso - No hay registros pendientes
 else Flujo principal
     BD --> IW : Registros pendientes confirmados
-    IW -> SE : Lanza petición HTTP al servidor de escucha
-    alt FA2: Servidor de escucha no responde
+    IW -> SE : Lanza petición al servidor
+    alt FA2: Servidor no responde
         SE --> IW : Timeout / Sin respuesta
         IW --> Operario : Error de conexión - Robot no activado
-    else FA3: Petición HTTP rechazada
+    else FA3: Petición rechazada
         SE --> IW : Petición rechazada
         IW --> Operario : Fallo - Registros permanecen en estado 0
     else Servidor responde OK

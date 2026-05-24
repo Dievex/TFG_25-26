@@ -1,0 +1,13 @@
+@startuml
+participant RobotRPA
+participant "SAP GUI" as SAP
+participant Impresora
+participant Galia
+
+RobotRPA -> SAP : completarDeclaracion(referencia, orden, cantidad)
+SAP -> SAP : generarDocumentoGalia()
+SAP -> Impresora : enviarImpresion(galia, impresoraDestino)
+Impresora --> SAP : trabajoEncolado
+SAP --> RobotRPA : declaracionOK
+RobotRPA -> Galia : actualizarEstado(id, 1)
+@enduml

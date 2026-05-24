@@ -1,0 +1,38 @@
+@startuml
+class UsuarioCRUDView {
+  +mostrarListaUsuarios(usuarios: List)
+  +mostrarFormularioAlta()
+  +mostrarFormularioEdicion(usuario: Usuario)
+  +confirmarEliminacion(usuarioId: Integer)
+  +mostrarMensaje(msg: String)
+}
+
+class UsuarioController {
+  +crearUsuario(dto: UsuarioDTO) : Usuario
+  +consultarUsuarios() : List<Usuario>
+  +actualizarUsuario(id: Integer, dto: UsuarioDTO) : Usuario
+  +eliminarUsuario(id: Integer) : Boolean
+}
+
+class Usuario {
+  -id: Integer
+  -nombre: String
+  -email: String
+  -passwordHash: String
+  -rolId: Integer
+  +create(dto: UsuarioDTO) : Usuario
+  +findAll() : List<Usuario>
+  +update(id: Integer, dto: UsuarioDTO)
+  +delete(id: Integer)
+}
+
+class Rol {
+  -id: Integer
+  -nombre: String
+  +findAll() : List<Rol>
+}
+
+UsuarioCRUDView --> UsuarioController : operaciones CRUD
+UsuarioController --> Usuario : persiste/consulta
+UsuarioController --> Rol : consulta roles disponibles
+@enduml

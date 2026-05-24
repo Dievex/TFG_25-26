@@ -1,0 +1,18 @@
+@startuml
+actor Operario
+participant LoginView
+participant AuthController
+participant Usuario
+participant Rol
+
+Operario -> LoginView : introduce usuario y contraseña
+LoginView -> AuthController : login(usuario, password)
+AuthController -> Usuario : buscarPorEmail(email)
+Usuario --> AuthController : usuarioEncontrado
+AuthController -> Usuario : validarCredenciales(password)
+Usuario --> AuthController : credencialesOK
+AuthController -> Rol : getRol(rolId)
+Rol --> AuthController : rol
+AuthController --> LoginView : tokenSesion + rol
+LoginView --> Operario : redirige a pantalla según rol
+@enduml

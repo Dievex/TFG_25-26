@@ -1,0 +1,78 @@
+@startuml DiagramaComponentes
+skinparam componentStyle rectangle
+skinparam linetype ortho
+
+package "Capa de presentación (React)" {
+  [LoginView]
+  [AdminView]
+  [DeclaracionView]
+  [LogView]
+  [UsuarioCRUDView]
+}
+
+package "Capa de lógica de negocio (Node.js / Express)" {
+  [AuthController]
+  [EnvioSAPController]
+  [DeclaracionController]
+  [RegistroController]
+  [LogController]
+  [UsuarioController]
+  [AdminController]
+}
+
+package "Capa de automatización RPA (UiPath)" {
+  [ServidorEscucha]
+  [FlujoLoginSAP]
+  [FlujoProcesamiento]
+  [FlujoCambioPassword]
+  [FlujoLogging]
+}
+
+package "Capa de persistencia" {
+  database "Base de datos relacional" as DB
+}
+
+component "SAP GUI" as SAP
+component "MES (Apriso)" as MES
+
+' ── Presentación → Lógica de negocio ──
+[LoginView]       --> [AuthController]        : API REST
+[AdminView]       --> [AdminController]       : API REST
+[DeclaracionView] --> [DeclaracionController] : API REST
+[DeclaracionView] --> [RegistroController]    : API REST
+[DeclaracionView] --> [EnvioSAPController]    : API REST
+[LogView]         --> [LogController]         : API REST
+[UsuarioCRUDView] --> [UsuarioController]     : API REST
+
+' ── AdminView navega hacia otras vistas ──
+[AdminView] --> [DeclaracionView]
+[AdminView] --> [LogView]
+[AdminView] --> [UsuarioCRUDView]
+
+' ── Lógica de negocio → Persistencia ──
+[AuthController]        --> DB
+[EnvioSAPController]    --> DB
+[DeclaracionController] --> DB
+[RegistroController]    --> DB
+[LogController]         --> DB
+[UsuarioController]     --> DB
+[AdminController]       --> DB
+
+' ── Lógica de negocio → Sistemas externos ──
+[RegistroController]  --> MES                : Declaración de piezas
+[EnvioSAPController]  --> [ServidorEscucha]  : HTTP POST activación
+
+' ── Capa RPA ──
+[ServidorEscucha]    --> [FlujoProcesamiento]
+[FlujoProcesamiento] --> [FlujoLoginSAP]
+[FlujoProcesamiento] --> [FlujoCambioPassword]
+[FlujoProcesamiento] --> [FlujoLogging]
+
+' ── RPA → externos ──
+[FlujoLoginSAP]       --> SAP : Automatización GUI
+[FlujoProcesamiento]  --> SAP : Automatización GUI
+[FlujoCambioPassword] --> SAP : Automatización GUI
+[FlujoLogging]        --> DB  : Escritura logs
+[FlujoProcesamiento]  --> DB  : Lectura/escritura registros
+
+@enduml

@@ -1,0 +1,16 @@
+@startuml
+participant RobotRPA
+participant ConfiguracionSAP
+participant "SAP GUI" as SAP
+participant LogEjecucion
+
+RobotRPA -> ConfiguracionSAP : getDiasDesdeUltimoCambio()
+ConfiguracionSAP --> RobotRPA : 28 dias
+RobotRPA -> SAP : navegarPantallaCambioPassword()
+RobotRPA -> SAP : introducirPasswordActual(actual)
+RobotRPA -> SAP : introducirNuevaPassword(nueva)
+RobotRPA -> SAP : confirmarNuevaPassword(nueva)
+SAP --> RobotRPA : cambioAceptado
+RobotRPA -> ConfiguracionSAP : actualizarFechaCambio(hoy)
+RobotRPA -> LogEjecucion : registrar("CAMBIO_PASSWORD", "OK", true)
+@enduml

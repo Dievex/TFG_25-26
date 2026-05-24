@@ -1,0 +1,48 @@
+@startuml
+actor Administrador
+participant UsuarioCRUDView
+participant UsuarioController
+participant Usuario
+participant Rol
+
+Administrador -> UsuarioCRUDView : accede a gestión de usuarios
+UsuarioCRUDView -> UsuarioController : consultarUsuarios()
+UsuarioController -> Usuario : findAll()
+Usuario --> UsuarioController : listaUsuarios
+UsuarioController -> Rol : findAll()
+Rol --> UsuarioController : listaRoles
+UsuarioController --> UsuarioCRUDView : usuarios + roles disponibles
+UsuarioCRUDView --> Administrador : tabla de usuarios
+
+alt Crear nuevo usuario
+  Administrador -> UsuarioCRUDView : pulsa "+ Nuevo Usuario"
+  UsuarioCRUDView --> Administrador : muestra formulario de alta
+  Administrador -> UsuarioCRUDView : rellena nombre, email, password, rol
+  UsuarioCRUDView -> UsuarioController : crearUsuario(dto)
+  UsuarioController -> UsuarioController : validarCamposObligatorios(dto)
+  UsuarioController -> Usuario : create(dto)
+  Usuario --> UsuarioController : usuarioCreado
+  UsuarioController --> UsuarioCRUDView : OK
+  UsuarioCRUDView --> Administrador : tabla actualizada + confirmación
+
+else Editar usuario existente
+  Administrador -> UsuarioCRUDView : pulsa ✏ en un usuario
+  UsuarioCRUDView --> Administrador : muestra formulario con datos actuales
+  Administrador -> UsuarioCRUDView : modifica campos y confirma
+  UsuarioCRUDView -> UsuarioController : actualizarUsuario(id, dto)
+  UsuarioController -> Usuario : update(id, dto)
+  Usuario --> UsuarioController : usuarioActualizado
+  UsuarioController --> UsuarioCRUDView : OK
+  UsuarioCRUDView --> Administrador : tabla actualizada + confirmación
+
+else Eliminar usuario
+  Administrador -> UsuarioCRUDView : pulsa 🗑 en un usuario
+  UsuarioCRUDView --> Administrador : diálogo de confirmación "¿Eliminar?"
+  Administrador -> UsuarioCRUDView : confirma eliminación
+  UsuarioCRUDView -> UsuarioController : eliminarUsuario(id)
+  UsuarioController -> Usuario : delete(id)
+  Usuario --> UsuarioController : eliminado
+  UsuarioController --> UsuarioCRUDView : OK
+  UsuarioCRUDView --> Administrador : tabla actualizada + confirmación
+end
+@enduml

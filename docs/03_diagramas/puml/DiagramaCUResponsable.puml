@@ -17,11 +17,21 @@ rectangle "Sistema RPA Galia/SAP" {
         usecase "Actualizar registro"    as UC_UPD
         usecase "Eliminar registro"      as UC_DEL
     }
+    package "Gestión de Declaraciones" {
+        usecase "Registrar declaración" as UC1
+        usecase "Guardar registro"      as UC2
+        usecase "Enviar a SAP"          as UC3
+        usecase "Consultar log propio"  as UC_LOG_OP
+    }
 }
 
 Responsable --> UC_LOGIN
 Responsable --> UC_LOG_RES
 Responsable --> UC_UPD
 Responsable --> UC_DEL
+Responsable --> UC1
+Responsable --> UC2
+Responsable --> UC3
+Responsable --> UC_LOG_OP
 
 @enduml

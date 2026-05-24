@@ -1,0 +1,83 @@
+@startuml
+package "frontend (React)" {
+  package "views" {
+    package "auth" {
+      [LoginView]
+    }
+    package "declaracion" {
+      [DeclaracionView]
+    }
+    package "log" {
+      [LogView]
+    }
+    package "admin" {
+      [AdminView]
+      [UsuarioCRUDView]
+    }
+  }
+}
+
+package "backend (Node/Express)" {
+  package "routes" {
+    [authRoutes]
+    [declaracionRoutes]
+    [registroRoutes]
+    [envioSAPRoutes]
+    [logRoutes]
+    [adminRoutes]
+    [usuarioRoutes]
+  }
+  package "controllers" {
+    [AuthController]
+    [DeclaracionController]
+    [RegistroController]
+    [EnvioSAPController]
+    [LogController]
+    [AdminController]
+    [UsuarioController]
+  }
+  package "models" {
+    [Usuario]
+    [Rol]
+    [PuestoTrabajo]
+    [Referencia]
+    [OrdenFabricacion]
+    [Registro]
+    [Galia]
+    [LogEjecucion]
+    [ConfiguracionSAP]
+    [Impresora]
+  }
+  package "config" {
+    [db.config]
+    [server.config]
+    [env.config]
+  }
+}
+
+package "rpa (UiPath)" {
+  package "login" {
+    [FlujoLoginSAP]
+  }
+  package "procesamiento" {
+    [FlujoProcesamiento]
+  }
+  package "gestion_password" {
+    [FlujoCambioPassword]
+  }
+  package "logging" {
+    [FlujoLogging]
+  }
+  package "escucha" {
+    [ServidorEscucha]
+  }
+}
+
+[routes] --> [controllers]
+[controllers] --> [models]
+[EnvioSAPController] --> [ServidorEscucha] : HTTP
+[ServidorEscucha] --> [FlujoProcesamiento]
+[FlujoProcesamiento] --> [FlujoLoginSAP]
+[FlujoProcesamiento] --> [FlujoCambioPassword]
+[FlujoProcesamiento] --> [FlujoLogging]
+@enduml

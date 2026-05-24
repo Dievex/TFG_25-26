@@ -1,0 +1,32 @@
+@startuml
+class RobotRPA {
+  -estado: String
+  -ultimoCambioPassword: DateTime
+  +verificarContrasena() : Boolean
+  +ejecutarCambioContrasena()
+}
+
+class ConfiguracionSAP {
+  -id: Integer
+  -puestoId: Integer
+  -usuario: String
+  -passwordActual: String
+  -ultimoCambioPassword: DateTime
+  +getDiasDesdeUltimoCambio() : Integer
+  +generarNuevaPassword() : String
+  +actualizarFechaCambio(fecha: DateTime)
+  +actualizarPassword(nueva: String)
+}
+
+class LogEjecucion {
+  -id: Integer
+  -tipoEvento: String
+  -mensaje: String
+  -fechaHora: DateTime
+  -exito: Boolean
+  +registrar(evento: String, mensaje: String, exito: Boolean)
+}
+
+RobotRPA --> ConfiguracionSAP : consulta y actualiza
+RobotRPA --> LogEjecucion : registra resultado
+@enduml

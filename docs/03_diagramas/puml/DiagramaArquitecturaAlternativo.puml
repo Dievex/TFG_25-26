@@ -1,0 +1,73 @@
+@startuml
+
+skinparam rectangle {
+  BorderColor black
+  BackgroundColor white
+}
+
+' =====================
+' CAPA DE PRESENTACIÓN
+' =====================
+rectangle "Capa de presentación (React)" {
+  rectangle "LoginView"
+      rectangle "DeclaracionView"
+    rectangle "LogView"
+  rectangle "AdminView" {
+    rectangle "UsuarioCRUDView"
+  }
+}
+
+' =====================
+' CAPA DE LÓGICA DE NEGOCIO
+' =====================
+rectangle "Capa de lógica de negocio (Node.js / Express)" {
+  rectangle "AuthController"
+  rectangle "RpaController"
+  rectangle "DeclaracionController"
+  rectangle "RegistroController"
+  rectangle "LogController"
+  rectangle "UsuarioController"
+}
+
+' =====================
+' CAPA RPA
+' =====================
+rectangle "Capa de automatización RPA (UiPath)" {
+  rectangle "Robot RPA"
+}
+
+rectangle "SAP GUI"
+
+' =====================
+' CAPA DE PERSISTENCIA
+' =====================
+rectangle "Capa de persistencia" {
+  database "Base de datos relacional"
+}
+
+' =====================
+' RELACIONES - Presentación → Lógica
+' =====================
+LoginView       --> AuthController        : API REST
+DeclaracionView --> DeclaracionController : API REST
+DeclaracionView --> RegistroController    : API REST
+LogView         --> LogController         : API REST
+UsuarioCRUDView --> UsuarioController     : API REST
+
+' =====================
+' RELACIONES - Lógica → RPA / SAP / MES / BD
+' =====================
+RpaController  --> "Robot RPA"               : activación
+"Robot RPA"         --> "SAP GUI"                 : Automatización GUI
+"Robot RPA"         --> "Base de datos relacional": Lectura/escritura registros y logs
+
+' =====================
+' RELACIONES - Lógica → Persistencia
+' =====================
+AuthController      --> "Base de datos relacional"
+RpaController  --> "Base de datos relacional"
+DeclaracionController --> "Base de datos relacional"
+RegistroController  --> "Base de datos relacional"
+LogController       --> "Base de datos relacional"
+UsuarioController   --> "Base de datos relacional"
+@enduml

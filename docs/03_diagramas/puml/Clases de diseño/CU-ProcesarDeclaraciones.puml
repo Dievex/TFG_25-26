@@ -1,0 +1,37 @@
+@startuml
+class RobotRPA {
+  -estado: String
+  -ultimoCambioPassword: DateTime
+  +activar()
+  +verificarContrasena() : Boolean
+  +procesarLote()
+  +cerrarSesion()
+}
+
+class Registro {
+  -estado: Integer
+  +getRegistrosPendientes() : List<Registro>
+  +actualizarEstado(id: Integer, estado: Integer)
+}
+
+class Galia {
+  -estado: Integer
+  +actualizarEstado(id: Integer, estado: Integer)
+}
+
+class LogEjecucion {
+  +registrar(evento: String, mensaje: String, exito: Boolean)
+}
+
+class ConfiguracionSAP {
+  -usuario: String
+  -ultimoCambioPassword: DateTime
+  +getDiasDesdeUltimoCambio() : Integer
+  +actualizarFechaCambio()
+}
+
+RobotRPA --> Registro : lee pendientes y actualiza estados
+RobotRPA --> Galia : actualiza estado
+RobotRPA --> LogEjecucion : registra eventos
+RobotRPA --> ConfiguracionSAP : verifica y actualiza contraseña
+@enduml

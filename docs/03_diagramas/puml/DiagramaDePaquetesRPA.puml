@@ -1,0 +1,37 @@
+@startuml Diagrama3_RPA
+
+top to bottom direction
+skinparam packageStyle rectangle
+skinparam defaultTextAlignment center
+skinparam nodesep 40
+skinparam ranksep 50
+
+package "Backend (Node/Express)" {
+  [RpaController]
+}
+
+package "RPA (UiPath)" {
+  package "escucha" {
+    [ServidorEscucha]
+  }
+  package "procesamiento" {
+    [FlujoProcesamiento]
+  }
+  package "login" {
+    [FlujoLoginSAP]
+  }
+  package "gestion_password" {
+    [FlujoCambioPassword]
+  }
+  package "logging" {
+    [FlujoLogging]
+  }
+}
+
+[RpaController] --> [ServidorEscucha]   
+[ServidorEscucha]    --> [FlujoProcesamiento] : activa
+[FlujoProcesamiento] --> [FlujoLoginSAP]      : llama
+[FlujoProcesamiento] --> [FlujoCambioPassword]: llama
+[FlujoProcesamiento] --> [FlujoLogging]       : llama
+
+@enduml

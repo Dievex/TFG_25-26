@@ -1,0 +1,35 @@
+@startuml
+class LoginView {
+  +mostrarFormulario()
+  +capturarCredenciales() : {usuario, password}
+  +mostrarError(mensaje: String)
+  +redirigirSegunRol(rol: String)
+}
+
+class AuthController {
+  +login(usuario: String, password: String) : TokenSesion
+  +logout(token: String)
+  +verificarToken(token: String) : Usuario
+}
+
+class Usuario {
+  -id: Integer
+  -nombre: String
+  -email: String
+  -passwordHash: String
+  -rolId: Integer
+  +validarCredenciales(password: String) : Boolean
+  +getRol() : Rol
+}
+
+class Rol {
+  -id: Integer
+  -nombre: String
+  -permisos: String[]
+  +tienePermiso(accion: String) : Boolean
+}
+
+LoginView --> AuthController : solicita login
+AuthController --> Usuario : consulta credenciales
+AuthController --> Rol : obtiene rol
+@enduml

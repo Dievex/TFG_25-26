@@ -1,0 +1,45 @@
+@startuml
+class DeclaracionView {
+  +mostrarDesplegablePuestos(puestos: List)
+  +mostrarDesplegableReferencias(refs: List)
+  +mostrarDesplegableOrdenes(ordenes: List)
+  +mostrarCantidadAnterior(cantidad: Integer)
+  +capturarCantidad() : Integer
+  +mostrarError(mensaje: String)
+}
+
+class DeclaracionController {
+  +cargarPuestos() : List<PuestoTrabajo>
+  +cargarReferencias(puestoId: Integer) : List<Referencia>
+  +cargarOrdenes(referenciaId: Integer) : List<OrdenFabricacion>
+  +obtenerCantidadAnterior(ordenId: Integer) : Integer
+}
+
+class PuestoTrabajo {
+  -id: Integer
+  -nombre: String
+  -usuarioSAP: String
+  -impresoraId: Integer
+  +getPuestosActivos() : List<PuestoTrabajo>
+}
+
+class Referencia {
+  -id: Integer
+  -codigo: String
+  -descripcion: String
+  +getReferenciasPorPuesto(puestoId: Integer) : List<Referencia>
+}
+
+class OrdenFabricacion {
+  -id: Integer
+  -numero: String
+  -cantidad: Integer
+  -referenciaId: Integer
+  +getOrdenesPorReferencia(refId: Integer) : List<OrdenFabricacion>
+}
+
+DeclaracionView --> DeclaracionController : solicita datos
+DeclaracionController --> PuestoTrabajo : consulta
+DeclaracionController --> Referencia : consulta
+DeclaracionController --> OrdenFabricacion : consulta
+@enduml

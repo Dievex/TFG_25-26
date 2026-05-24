@@ -1,0 +1,62 @@
+@startuml Diagrama2_Backend
+
+top to bottom direction
+skinparam packageStyle rectangle
+skinparam defaultTextAlignment center
+skinparam nodesep 40
+skinparam ranksep 50
+
+package "Backend (Node/Express)" {
+
+  package "routes" {
+    [authRoutes]
+    [declaracionRoutes]
+    [registroRoutes]
+    [rpaRoutes]
+    [logRoutes]
+    [adminRoutes]
+    [usuarioRoutes]
+  }
+
+  package "controllers" {
+    [AuthController]
+    [DeclaracionController]
+    [RegistroController]
+    [RpaController]
+    [LogController]
+    [AdminController]
+    [UsuarioController]
+  }
+
+  package "models" {
+    [Usuario]
+    [Rol]
+    [PuestoTrabajo]
+    [Referencia]
+    [OrdenFabricacion]
+  }
+
+  package "config" {
+    [db.config]
+    [server.config]
+    [env.config]
+  }
+}
+
+[authRoutes]       --> [AuthController]
+[declaracionRoutes]--> [DeclaracionController]
+[registroRoutes]   --> [RegistroController]
+[rpaRoutes]   --> [RpaController]
+[logRoutes]        --> [LogController]
+[adminRoutes]      --> [AdminController]
+[usuarioRoutes]    --> [UsuarioController]
+
+[AuthController]        --> [Usuario]
+[AuthController]        --> [Rol]
+[DeclaracionController] --> [Referencia]
+[DeclaracionController] --> [OrdenFabricacion]
+[AdminController]       --> [Usuario]
+[AdminController]       --> [Rol]
+[AdminController]       --> [PuestoTrabajo]
+
+@enduml

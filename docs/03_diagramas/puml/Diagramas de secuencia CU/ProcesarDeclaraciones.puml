@@ -1,0 +1,36 @@
+@startuml
+participant "Servidor de Escucha" as Servidor
+participant RobotRPA
+participant ConfiguracionSAP
+participant Registro
+participant Galia
+participant LogEjecucion
+participant "SAP GUI" as SAP
+
+Servidor -> RobotRPA : activar()
+RobotRPA -> ConfiguracionSAP : getDiasDesdeUltimoCambio()
+ConfiguracionSAP --> RobotRPA : diasTranscurridos
+alt diasTranscurridos >= 28
+  RobotRPA -> SAP : cambiarContrasena()
+  RobotRPA -> ConfiguracionSAP : actualizarFechaCambio()
+end
+RobotRPA -> SAP : login(usuario, password)
+SAP --> RobotRPA : sesionIniciada
+RobotRPA -> Registro : getRegistrosPendientes()
+Registro --> RobotRPA : listaRegistros
+loop por cada Registro pendiente
+  RobotRPA -> SAP : ejecutarTransaccion(referencia, orden, cantidad)
+  alt SAP OK
+    SAP --> RobotRPA : confirmacion
+    RobotRPA -> Registro : actualizarEstado(id, 1)
+    RobotRPA -> Galia : actualizarEstado(id, 1)
+    RobotRPA -> LogEjecucion : registrar("OK", mensaje, true)
+  else SAP Error
+    SAP --> RobotRPA : error
+    RobotRPA -> Registro : actualizarEstado(id, 2)
+    RobotRPA -> Galia : actualizarEstado(id, 2)
+    RobotRPA -> LogEjecucion : registrar("ERROR", error, false)
+  end
+end
+RobotRPA -> SAP : cerrarSesion()
+@enduml

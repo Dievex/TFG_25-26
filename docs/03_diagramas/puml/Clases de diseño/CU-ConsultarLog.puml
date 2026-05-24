@@ -1,0 +1,31 @@
+@startuml
+class LogView {
+  +mostrarTablaRegistros(registros: List)
+  +aplicarFiltros(fecha, puesto, estado)
+  +mostrarDetalleEjecucion(logId: Integer)
+  +exportarCSV()
+}
+
+class LogController {
+  +consultarLogs(filtros: FiltrosDTO) : List<LogEjecucion>
+  +consultarRegistros(filtros: FiltrosDTO) : List<Registro>
+  +consultarGalias(filtros: FiltrosDTO) : List<Galia>
+}
+
+class LogEjecucion {
+  +getByFiltros(filtros: FiltrosDTO) : List<LogEjecucion>
+}
+
+class Registro {
+  +getByFiltros(filtros: FiltrosDTO) : List<Registro>
+}
+
+class Galia {
+  +getByFiltros(filtros: FiltrosDTO) : List<Galia>
+}
+
+LogView --> LogController : solicita datos
+LogController --> LogEjecucion : consulta
+LogController --> Registro : consulta
+LogController --> Galia : consulta
+@enduml

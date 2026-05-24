@@ -1,0 +1,42 @@
+@startuml
+class RobotRPA {
+  +procesarDeclaracion(registro: Registro)
+}
+
+class Galia {
+  -id: Integer
+  -registroId: Integer
+  -numeroOrden: String
+  -referencia: String
+  -cantidad: Integer
+  -estado: Integer
+  -fechaProcesado: DateTime
+  +actualizarEstado(id: Integer, estado: Integer)
+  +getByRegistroId(registroId: Integer) : Galia
+}
+
+class Impresora {
+  -id: Integer
+  -nombre: String
+  -ubicacion: String
+  -puestoId: Integer
+  +getImpresoraPorPuesto(puestoId: Integer) : Impresora
+}
+
+class PuestoTrabajo {
+  -id: Integer
+  -nombre: String
+  -usuarioSAP: String
+  -impresoraId: Integer
+  +getImpresoraAsignada() : Impresora
+}
+
+class LogEjecucion {
+  +registrar(evento: String, mensaje: String, exito: Boolean)
+}
+
+RobotRPA --> Galia : actualiza estado
+RobotRPA --> PuestoTrabajo : obtiene impresora asignada
+PuestoTrabajo --> Impresora : tiene asignada
+RobotRPA --> LogEjecucion : registra impresión
+@enduml
