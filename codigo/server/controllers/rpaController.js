@@ -1,11 +1,20 @@
+const { exec } = require('child_process');
+
 exports.activarRobot = (req, res) => {
-  // Aquí iría la lógica para ejecutar el archivo .bat
-  // Ejemplo:
-  // const { exec } = require('child_process');
-  // exec('C:\\Ruta\\al\\robot.bat', (error, stdout, stderr) => { ... });
+  const batPath = '"C:\\Users\\informatica\\Documents\\Documentos Diego\\TFG\\ejecucion.bat"';
   
-  console.log("--> SIMULANDO: Ejecución del archivo .bat del RPA para interactuar con SAP");
+  console.log(`--> Ejecutando archivo .bat del RPA en la ruta: ${batPath}`);
   
-  // Retornamos éxito de la llamada
   res.json({ message: 'Se ha enviado la señal al robot RPA correctamente' });
+
+  exec(batPath, (error, stdout, stderr) => {
+    if (error) {
+      console.error(`Error al ejecutar el bat: ${error.message}`);
+      return;
+    }
+    if (stderr) {
+      console.error(`stderr: ${stderr}`);
+    }
+    console.log(`stdout: ${stdout}`);
+  });
 };
