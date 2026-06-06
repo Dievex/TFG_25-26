@@ -1,0 +1,37 @@
+@startuml
+title CU - Actualizar usuario
+
+actor Administrador
+boundary InterfazWeb
+control UsuarioController
+database BD
+
+Administrador -> InterfazWeb : Selecciona editar usuario
+InterfazWeb -> UsuarioController : obtenerUsuario(idUsuario)
+UsuarioController -> BD : consultarUsuario(idUsuario)
+BD --> UsuarioController : datosUsuario
+UsuarioController --> InterfazWeb : devolverUsuario(datosUsuario)
+InterfazWeb --> Administrador : Mostrar formulario edición
+
+Administrador -> InterfazWeb : Enviar cambios
+InterfazWeb -> UsuarioController : actualizarUsuario(idUsuario,datos)
+UsuarioController -> UsuarioController : validarDatos(datos)
+UsuarioController -> BD : comprobarDuplicidad(mail)
+BD --> UsuarioController : resultado
+UsuarioController -> BD : updateUsuario(idUsuario,datos)
+BD --> UsuarioController : OK
+UsuarioController --> InterfazWeb : confirmación
+InterfazWeb --> Administrador : Mostrar actualización correcta
+
+alt Datos inválidos
+  UsuarioController --> InterfazWeb : errorValidación
+  InterfazWeb --> Administrador : Mostrar error
+else Correo duplicado
+  UsuarioController --> InterfazWeb : errorDuplicidad
+  InterfazWeb --> Administrador : Mostrar error
+else Error en BD
+  BD --> UsuarioController : error
+  UsuarioController --> InterfazWeb : errorPersistencia
+  InterfazWeb --> Administrador : Mostrar error
+end
+@enduml
