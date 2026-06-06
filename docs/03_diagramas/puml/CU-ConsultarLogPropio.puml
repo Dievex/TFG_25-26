@@ -1,0 +1,24 @@
+@startuml
+title CU - Consultar log propio
+
+actor Operario
+boundary InterfazWeb
+control LogController
+database BD
+
+Operario -> InterfazWeb : Accede al módulo de log
+InterfazWeb -> LogController : solicitarLogPropio(idUsuario)
+LogController -> BD : consultarRegistrosPorUsuario(idUsuario)
+BD --> LogController : listaRegistros
+LogController --> InterfazWeb : devolverRegistros(listaRegistros)
+InterfazWeb --> Operario : Mostrar tabla de log propio
+
+alt No existen registros
+  LogController --> InterfazWeb : lista vacía
+  InterfazWeb --> Operario : Mostrar mensaje informativo
+else Error en consulta
+  BD --> LogController : error
+  LogController --> InterfazWeb : notificarError()
+  InterfazWeb --> Operario : Mostrar error
+end
+@enduml
