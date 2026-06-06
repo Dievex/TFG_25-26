@@ -1,0 +1,32 @@
+@startuml
+title CU - Crear usuario
+
+actor Administrador
+boundary InterfazWeb
+control UsuarioController
+database BD
+
+Administrador -> InterfazWeb : Selecciona nuevo usuario
+InterfazWeb --> Administrador : Mostrar formulario alta
+Administrador -> InterfazWeb : Introducir datos usuario
+InterfazWeb -> UsuarioController : crearUsuario(datos)
+UsuarioController -> UsuarioController : validarDatos(datos)
+UsuarioController -> BD : comprobarDuplicidad(mail)
+BD --> UsuarioController : resultado
+UsuarioController -> BD : insertarUsuario(datos)
+BD --> UsuarioController : OK
+UsuarioController --> InterfazWeb : confirmación
+InterfazWeb --> Administrador : Mostrar alta correcta
+
+alt Campos obligatorios vacíos
+  UsuarioController --> InterfazWeb : errorValidación
+  InterfazWeb --> Administrador : Mostrar error
+else Usuario duplicado
+  UsuarioController --> InterfazWeb : errorDuplicidad
+  InterfazWeb --> Administrador : Mostrar error
+else Error en BD
+  BD --> UsuarioController : error
+  UsuarioController --> InterfazWeb : errorPersistencia
+  InterfazWeb --> Administrador : Mostrar error
+end
+@enduml
