@@ -1,0 +1,29 @@
+@startuml
+title CU - Eliminar registro
+
+actor Responsable
+boundary InterfazWeb
+control LogController
+database BD
+
+Responsable -> InterfazWeb : Selecciona eliminar registro
+InterfazWeb --> Responsable : Solicitar confirmación
+Responsable -> InterfazWeb : Confirmar eliminación
+InterfazWeb -> LogController : eliminarRegistro(idRegistro)
+LogController -> BD : deleteRegistro(idRegistro)
+BD --> LogController : OK
+LogController --> InterfazWeb : confirmación
+InterfazWeb --> Responsable : Mostrar tabla actualizada
+
+alt Operación cancelada
+  InterfazWeb --> Responsable : No se realizan cambios
+else Registro no existe
+  BD --> LogController : no encontrado
+  LogController --> InterfazWeb : errorRegistro
+  InterfazWeb --> Responsable : Mostrar aviso
+else Error en BD
+  BD --> LogController : error
+  LogController --> InterfazWeb : errorPersistencia
+  InterfazWeb --> Responsable : Mostrar error
+end
+@enduml
