@@ -1,0 +1,36 @@
+@startuml
+title CU - Actualizar registro
+
+actor Responsable
+boundary InterfazWeb
+control LogController
+database BD
+
+Responsable -> InterfazWeb : Selecciona editar registro
+InterfazWeb -> LogController : obtenerRegistro(idRegistro)
+LogController -> BD : consultarRegistro(idRegistro)
+BD --> LogController : datosRegistro
+LogController --> InterfazWeb : devolverRegistro(datosRegistro)
+InterfazWeb --> Responsable : Mostrar formulario de edición
+
+Responsable -> InterfazWeb : Enviar cambios
+InterfazWeb -> LogController : actualizarRegistro(idRegistro,datos)
+LogController -> LogController : validarDatos(datos)
+LogController -> BD : updateRegistro(idRegistro,datos)
+BD --> LogController : OK
+LogController --> InterfazWeb : confirmación
+InterfazWeb --> Responsable : Mostrar actualización correcta
+
+alt Datos inválidos
+  LogController --> InterfazWeb : errorValidación
+  InterfazWeb --> Responsable : Mostrar error
+else Registro no existe
+  BD --> LogController : no encontrado
+  LogController --> InterfazWeb : errorRegistro
+  InterfazWeb --> Responsable : Mostrar aviso
+else Error en BD
+  BD --> LogController : error
+  LogController --> InterfazWeb : errorPersistencia
+  InterfazWeb --> Responsable : Mostrar error
+end
+@enduml
