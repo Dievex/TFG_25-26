@@ -1,0 +1,24 @@
+@startuml
+title CU - Consultar usuarios
+
+actor Administrador
+boundary InterfazWeb
+control UsuarioController
+database BD
+
+Administrador -> InterfazWeb : Accede a gestión de usuarios
+InterfazWeb -> UsuarioController : solicitarUsuarios()
+UsuarioController -> BD : consultarUsuarios()
+BD --> UsuarioController : listaUsuarios
+UsuarioController --> InterfazWeb : devolverUsuarios(listaUsuarios)
+InterfazWeb --> Administrador : Mostrar tabla de usuarios
+
+alt No existen usuarios
+  UsuarioController --> InterfazWeb : lista vacía
+  InterfazWeb --> Administrador : Mostrar mensaje informativo
+else Error en consulta
+  BD --> UsuarioController : error
+  UsuarioController --> InterfazWeb : notificarError()
+  InterfazWeb --> Administrador : Mostrar error
+end
+@enduml
