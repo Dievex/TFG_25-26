@@ -1,0 +1,28 @@
+@startuml
+title CU - Eliminar usuario
+
+actor Administrador
+boundary InterfazWeb
+control UsuarioController
+database BD
+
+Administrador -> InterfazWeb : Selecciona eliminar usuario
+InterfazWeb --> Administrador : Solicitar confirmación
+Administrador -> InterfazWeb : Confirmar eliminación
+InterfazWeb -> UsuarioController : eliminarUsuario(idUsuario)
+UsuarioController -> BD : deleteUsuario(idUsuario)
+BD --> UsuarioController : OK
+UsuarioController --> InterfazWeb : confirmación
+InterfazWeb --> Administrador : Mostrar listado actualizado
+
+alt Operación cancelada
+  InterfazWeb --> Administrador : No se realizan cambios
+else Restricción de eliminación
+  UsuarioController --> InterfazWeb : errorRestricción
+  InterfazWeb --> Administrador : Mostrar aviso
+else Error en BD
+  BD --> UsuarioController : error
+  UsuarioController --> InterfazWeb : errorPersistencia
+  InterfazWeb --> Administrador : Mostrar error
+end
+@enduml
