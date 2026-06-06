@@ -1,0 +1,24 @@
+@startuml
+title CU - Consultar log completo
+
+actor Responsable
+boundary InterfazWeb
+control LogController
+database BD
+
+Responsable -> InterfazWeb : Accede al módulo de log
+InterfazWeb -> LogController : solicitarLogCompleto(filtros,pagina)
+LogController -> BD : consultarTodosLosRegistros(filtros,pagina)
+BD --> LogController : listaRegistros,total
+LogController --> InterfazWeb : devolverRegistros(listaRegistros,total)
+InterfazWeb --> Responsable : Mostrar tabla paginada y resumen
+
+alt No hay registros
+  LogController --> InterfazWeb : lista vacía
+  InterfazWeb --> Responsable : Mostrar mensaje informativo
+else Error en consulta
+  BD --> LogController : error
+  LogController --> InterfazWeb : notificarError()
+  InterfazWeb --> Responsable : Mostrar error
+end
+@enduml
