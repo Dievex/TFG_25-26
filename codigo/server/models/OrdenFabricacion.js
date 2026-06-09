@@ -5,7 +5,7 @@ class OrdenFabricacion {
     const pool = await poolPromise;
     const result = await pool.request()
       .input('idPuesto', sql.Int, idPuesto)
-      .query('SELECT * FROM RPA_GALIAS_PRE_2.SNC.ordenes WHERE idpuesto = @idPuesto');
+      .query('SELECT ID as id, NUMBER as numero, IDPOSITION as idpuesto FROM RPA_PRUEBA.SNC.orders WHERE IDPOSITION = @idPuesto');
     return result.recordset;
   }
 }

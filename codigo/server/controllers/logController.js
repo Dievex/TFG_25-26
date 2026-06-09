@@ -14,7 +14,7 @@ exports.exportarCSV = async (req, res) => {
   try {
     const { estado, puesto, orden, referencia } = req.query;
     
-    let query = 'SELECT * FROM RPA_GALIAS_PRE_2.SNC.snc_sdp_order_order_x_line_spot_sap WHERE 1=1';
+    let query = 'SELECT * FROM RPA_PRUEBA.SNC.snc_sdp_order_order_x_line_spot_sap WHERE 1=1';
     
     if (estado && estado !== 'Todos') {
       query += ` AND SAP_STATUS = ${parseInt(estado, 10)}`;

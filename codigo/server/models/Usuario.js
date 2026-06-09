@@ -8,10 +8,10 @@ class Usuario {
       const result = await pool.request()
         .input('mail', sql.VarChar, mail)
         .query(`
-          SELECT u.*, r.nombre as rol_nombre 
-          FROM RPA_GALIAS_PRE_2.SNC.usuarios u 
-          INNER JOIN RPA_GALIAS_PRE_2.SNC.roles r ON u.idrol = r.id 
-          WHERE u.mail = @mail
+          SELECT u.ID as id, u.MAIL as mail, u.PASSWORD as password, u.STATUS as estado, u."[DATE]" as fecha, u.IDROL as idrol, r.nombre as rol_nombre 
+          FROM RPA_PRUEBA.SNC.users u 
+          INNER JOIN RPA_PRUEBA.SNC.rols r ON u.IDROL = r.id 
+          WHERE u.MAIL = @mail
         `);
       return result.recordset[0];
     } catch (error) {
@@ -22,9 +22,9 @@ class Usuario {
   static async findAll() {
     const pool = await poolPromise;
     const result = await pool.request().query(`
-      SELECT u.id, u.mail, u.estado, u.fecha, r.id as idrol, r.nombre as rol_nombre 
-      FROM RPA_GALIAS_PRE_2.SNC.usuarios u 
-      INNER JOIN RPA_GALIAS_PRE_2.SNC.roles r ON u.idrol = r.id
+      SELECT u.ID as id, u.MAIL as mail, u.STATUS as estado, u."[DATE]" as fecha, r.id as idrol, r.nombre as rol_nombre 
+      FROM RPA_PRUEBA.SNC.users u 
+      INNER JOIN RPA_PRUEBA.SNC.rols r ON u.IDROL = r.id
     `);
     return result.recordset;
   }
@@ -40,7 +40,7 @@ class Usuario {
       .input('estado', sql.Bit, estado === undefined ? 1 : estado)
       .input('idrol', sql.Int, idrol)
       .query(`
-        INSERT INTO RPA_GALIAS_PRE_2.SNC.usuarios (mail, password, estado, idrol) 
+        INSERT INTO RPA_PRUEBA.SNC.users (MAIL, PASSWORD, STATUS, IDROL) 
         VALUES (@mail, @password, @estado, @idrol)
       `);
   }
@@ -50,8 +50,8 @@ class Usuario {
     const pool = await poolPromise;
     
     let query = `
-      UPDATE RPA_GALIAS_PRE_2.SNC.usuarios 
-      SET mail = @mail, estado = @estado, idrol = @idrol
+      UPDATE RPA_PRUEBA.SNC.users 
+      SET MAIL = @mail, STATUS = @estado, IDROL = @idrol
     `;
     
     const request = pool.request()
@@ -62,11 +62,11 @@ class Usuario {
 
     if (password && password.trim() !== '') {
       const hashedPassword = await bcrypt.hash(password, 10);
-      query += `, password = @password`;
+      query += `, PASSWORD = @password`;
       request.input('password', sql.VarChar, hashedPassword);
     }
 
-    query += ` WHERE id = @id`;
+    query += ` WHERE ID = @id`;
     await request.query(query);
   }
 
@@ -74,7 +74,7 @@ class Usuario {
     const pool = await poolPromise;
     await pool.request()
       .input('id', sql.Int, id)
-      .query('DELETE FROM RPA_GALIAS_PRE_2.SNC.usuarios WHERE id = @id');
+      .query('DELETE FROM RPA_PRUEBA.SNC.users WHERE ID = @id');
   }
 }
 

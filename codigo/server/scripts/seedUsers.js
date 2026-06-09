@@ -18,14 +18,14 @@ async function seedUsers() {
     for (const r of rolesBase) {
       let roleResult = await pool.request()
         .input('nombre', sql.VarChar, r.nombre)
-        .query('SELECT id FROM SNC.roles WHERE nombre = @nombre');
+        .query('SELECT id FROM RPA_PRUEBA.SNC.rols WHERE nombre = @nombre');
         
       if (roleResult.recordset.length === 0) {
         console.log(`Creando rol ${r.nombre}...`);
         const insertRole = await pool.request()
           .input('nombre', sql.VarChar, r.nombre)
           .input('desc', sql.VarChar, r.desc)
-          .query('INSERT INTO SNC.roles (nombre, descripcion) OUTPUT INSERTED.id VALUES (@nombre, @desc)');
+          .query('INSERT INTO RPA_PRUEBA.SNC.rols (nombre, descripcion) OUTPUT INSERTED.id VALUES (@nombre, @desc)');
         roleIds[r.nombre] = insertRole.recordset[0].id;
       } else {
         roleIds[r.nombre] = roleResult.recordset[0].id;
@@ -37,7 +37,7 @@ async function seedUsers() {
 
     const adminResult = await pool.request()
       .input('mail', sql.VarChar, adminMail)
-      .query('SELECT id FROM SNC.usuarios WHERE mail = @mail');
+      .query('SELECT ID FROM RPA_PRUEBA.SNC.users WHERE MAIL = @mail');
 
     if (adminResult.recordset.length > 0) {
       console.log(`El usuario administrador ${adminMail} ya existe. Actualizando contraseña...`);
@@ -45,7 +45,7 @@ async function seedUsers() {
       await pool.request()
         .input('mail', sql.VarChar, adminMail)
         .input('password', sql.VarChar, hashedAdminPassword)
-        .query('UPDATE SNC.usuarios SET password = @password WHERE mail = @mail');
+        .query('UPDATE RPA_PRUEBA.SNC.users SET PASSWORD = @password WHERE MAIL = @mail');
       console.log(`Contraseña de ${adminMail} actualizada correctamente.`);
     } else {
       console.log(`Creando usuario administrador (${adminMail})...`);
@@ -55,7 +55,7 @@ async function seedUsers() {
         .input('password', sql.VarChar, hashedAdminPassword)
         .input('estado', sql.Bit, 1)
         .input('idrol', sql.Int, roleIds['Administrador'])
-        .query('INSERT INTO SNC.usuarios (mail, password, estado, idrol) VALUES (@mail, @password, @estado, @idrol)');
+        .query('INSERT INTO RPA_PRUEBA.SNC.users (MAIL, PASSWORD, STATUS, IDROL) VALUES (@mail, @password, @estado, @idrol)');
       console.log(`Usuario administrador creado con éxito.`);
     }
 
@@ -64,7 +64,7 @@ async function seedUsers() {
 
     const opResult = await pool.request()
       .input('mail', sql.VarChar, opMail)
-      .query('SELECT id FROM SNC.usuarios WHERE mail = @mail');
+      .query('SELECT ID FROM RPA_PRUEBA.SNC.users WHERE MAIL = @mail');
 
     if (opResult.recordset.length > 0) {
       console.log(`El usuario operario ${opMail} ya existe. Actualizando contraseña...`);
@@ -72,7 +72,7 @@ async function seedUsers() {
       await pool.request()
         .input('mail', sql.VarChar, opMail)
         .input('password', sql.VarChar, hashedOpPassword)
-        .query('UPDATE SNC.usuarios SET password = @password WHERE mail = @mail');
+        .query('UPDATE RPA_PRUEBA.SNC.users SET PASSWORD = @password WHERE MAIL = @mail');
     } else {
       console.log(`Creando usuario operario (${opMail})...`);
       const hashedOpPassword = await bcrypt.hash(opPasswordPlain, 10);
@@ -81,7 +81,7 @@ async function seedUsers() {
         .input('password', sql.VarChar, hashedOpPassword)
         .input('estado', sql.Bit, 1)
         .input('idrol', sql.Int, roleIds['Operario'])
-        .query('INSERT INTO SNC.usuarios (mail, password, estado, idrol) VALUES (@mail, @password, @estado, @idrol)');
+        .query('INSERT INTO RPA_PRUEBA.SNC.users (MAIL, PASSWORD, STATUS, IDROL) VALUES (@mail, @password, @estado, @idrol)');
       console.log(`Usuario operario creado con éxito.`);
     }
 

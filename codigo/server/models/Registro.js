@@ -5,12 +5,12 @@ class Registro {
     const pool = await poolPromise;
     const result = await pool.request()
       .input('idOrden', sql.Int, idOrden)
-      .query('SELECT SUM(QUANTITY_MANUFACTURED) as total FROM RPA_GALIAS_PRE_2.SNC.snc_sdp_order_order_x_line_spot_sap WHERE ORDER_ID = @idOrden');
+      .query('SELECT SUM(QUANTITY_MANUFACTURED) as total FROM RPA_PRUEBA.SNC.snc_sdp_order_order_x_line_spot_sap WHERE ORDER_ID = @idOrden');
     return result.recordset[0].total || 0;
   }
 
   static async guardar(data) {
-    const { idOrden, numeroOrden, nombrePuesto, cantidad, numeroReferencia, idPuesto } = data;
+    const { idOrden, numeroOrden, nombrePuesto, cantidad, numeroReferencia, idPuesto, idReferencia } = data;
     const pool = await poolPromise;
     await pool.request()
       .input('fecha', sql.DateTime, new Date())
@@ -21,24 +21,25 @@ class Registro {
       .input('numeroReferencia', sql.VarChar, numeroReferencia)
       .input('estado', sql.Int, 0)
       .input('idPuesto', sql.Int, idPuesto)
+      .input('idReferencia', sql.Int, idReferencia)
       .query(`
-        INSERT INTO RPA_GALIAS_PRE_2.SNC.snc_sdp_order_order_x_line_spot_sap 
-        (DATE_TIME, ORDER_ID, ORDER_NUMBER, PRODUCTION_LINE, QUANTITY_MANUFACTURED, REFERENCE, SAP_STATUS, id_puesto) 
-        VALUES (@fecha, @idOrden, @numeroOrden, @nombrePuesto, @cantidad, @numeroReferencia, @estado, @idPuesto)
+        INSERT INTO RPA_PRUEBA.SNC.snc_sdp_order_order_x_line_spot_sap 
+        (DATE_TIME, ORDER_ID, ORDER_NUMBER, PRODUCTION_LINE, PRODUCTION_LINE_SPOT, QUANTITY_MANUFACTURED, REFERENCE, SAP_STATUS, LINESPOT_ID, REFERENCE_ID) 
+        VALUES (@fecha, @idOrden, @numeroOrden, @nombrePuesto, @nombrePuesto, @cantidad, @numeroReferencia, @estado, @idPuesto, @idReferencia)
       `);
   }
 
   static async getHistorialReciente() {
     const pool = await poolPromise;
     const result = await pool.request()
-      .query('SELECT TOP 50 * FROM RPA_GALIAS_PRE_2.SNC.snc_sdp_order_order_x_line_spot_sap ORDER BY DATE_TIME DESC');
+      .query('SELECT TOP 50 * FROM RPA_PRUEBA.SNC.snc_sdp_order_order_x_line_spot_sap ORDER BY DATE_TIME DESC');
     return result.recordset;
   }
 
   static async findAll() {
     const pool = await poolPromise;
     const result = await pool.request()
-      .query('SELECT * FROM RPA_GALIAS_PRE_2.SNC.snc_sdp_order_order_x_line_spot_sap ORDER BY DATE_TIME DESC');
+      .query('SELECT * FROM RPA_PRUEBA.SNC.snc_sdp_order_order_x_line_spot_sap ORDER BY DATE_TIME DESC');
     return result.recordset;
   }
 
@@ -50,7 +51,7 @@ class Registro {
       .input('newCantidad', sql.Int, newCantidad)
       .input('newEstado', sql.Int, newEstado)
       .query(`
-        UPDATE RPA_GALIAS_PRE_2.SNC.snc_sdp_order_order_x_line_spot_sap 
+        UPDATE RPA_PRUEBA.SNC.snc_sdp_order_order_x_line_spot_sap 
         SET QUANTITY_MANUFACTURED = @newCantidad, SAP_STATUS = @newEstado 
         WHERE ORDER_ID = @orderId AND DATE_TIME = @dateTime
       `);
@@ -62,7 +63,7 @@ class Registro {
       .input('dateTime', sql.DateTime, new Date(originalDateTime))
       .input('orderId', sql.Int, orderId)
       .query(`
-        DELETE FROM RPA_GALIAS_PRE_2.SNC.snc_sdp_order_order_x_line_spot_sap 
+        DELETE FROM RPA_PRUEBA.SNC.snc_sdp_order_order_x_line_spot_sap 
         WHERE ORDER_ID = @orderId AND DATE_TIME = @dateTime
       `);
   }
